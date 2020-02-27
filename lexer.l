@@ -6,7 +6,8 @@
 #include <iostream>
 #include <string>
 
-int yylen = 0;
+int yylen;
+
 %}
 
 DIGIT           [0-9]
