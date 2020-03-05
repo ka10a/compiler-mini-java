@@ -1,13 +1,12 @@
-#include <MiniJava.Lexer.h>
+#include <MiniJavaLexer.hh>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <streambuf>
-//#include <ios_ba>
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        throw std::runtime_error("No filename for scan");
+        throw std::runtime_error("No filename to scan");
     }
 
 // TODO: add more options: lex, bison, etc.

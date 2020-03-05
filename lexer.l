@@ -1,6 +1,5 @@
-%option header-file="MiniJava.Lexel.h"
+%option header-file="MiniJavaLexer.hh"
 %option reentrant noyywrap never-interactive nounistd
-
 
 %{
 #include <iostream>
