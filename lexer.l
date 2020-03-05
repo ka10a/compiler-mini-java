@@ -1,9 +1,12 @@
 %option header-file="MiniJavaLexer.hh"
 %option reentrant noyywrap never-interactive nounistd
+%option bison-bridge
+%option bison-locations
 
 %{
 #include <iostream>
 #include <string>
+#include <MiniJavaParser.hh>
 
 int yylen;
 
