@@ -1,3 +1,4 @@
+#include <MiniJavaParser.hh>
 #include <MiniJavaLexer.hh>
 #include <fstream>
 #include <sstream>

@@ -1,7 +1,7 @@
 %require "3.0"
 
 %language "c++"
-%define api.value.type variant
+// %define api.value.type variant
 
 %lex-param { bool verbose }
 %parse-param { MyScanner& scanner }
@@ -14,29 +14,34 @@
 }
 
 %code {
-    #include <MiniJavaLexer.hh>
+    //#include <MiniJavaLexer.hh>
     //#undef yylex
     //#define yylex yylex( scanner )
 }
+
+%{
+    #include <MiniJavaParser.hh>
+    #include <MiniJavaLexer.hh>
+    #include <iostream>
+%}
 
 %union {
     const int Ptr;
 }
 
 %token <Ptr> ID
-%token number
+%token <Number> Number
 %token Class
 %type <Ptr> exp
 
 %%
 
 exp:
-    "number"
-    | ID {$$ = $1;}
-    | exp "+" exp {$$ = $1 + $3; }
-    | exp "-" exp {$$ = $1 - $3; }
-    | exp "*" exp {$$ = $1 * $3; }
-    | exp "/" exp {$$ = $1 / $3; }
+    Number ID {$$ = $1;}
+    | exp[L] "+" exp[R] {$$ = $L + $R; }
+    | exp[L] "-" exp[R] {$$ = $L - $R; }
+    | exp[L] "*" exp[R] {$$ = $L * $R; }
+    | exp[L] "/" exp[R] {$$ = $L / $R; }
     | "(" exp ")" {$$ = $2; };
 
 %%
