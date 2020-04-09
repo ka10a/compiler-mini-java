@@ -1,36 +1,39 @@
-%require "3.0"
+//%require "3.0"
 
-// %language "c++"
-// %define api.value.type variant
-
-%lex-param { bool verbose }
-%parse-param { MyScanner& scanner }
-%parse-param { ASTRoot& root }
-%locations
+%define api.pure
+%param { yyscan_t scanner }
+//%parse-param { ASTRoot& root }
+//%locations
 
 %code requires {
-    class MyScanner;
-    class ASTRoot;
+    #ifndef YY_TYPEDEF_YY_SCANNER_T
+    #define YY_TYPEDEF_YY_SCANNER_T
+    typedef void* yyscan_t;
+    #endif
+    //class MyScanner;
+    //class ASTRoot;
 }
 
 %code {
-    //#include <MiniJavaLexer.hh>
-    //#undef yylex
-    //#define yylex yylex( scanner )
 }
 
 %{
     #include <MiniJavaParser.hh>
     #include <MiniJavaLexer.hh>
     #include <iostream>
+
+    int yyerror( yyscan_t scanner, int& result, const char* msg )
+    {
+        std::cerr << "kerror called: '" << msg << "'" << std::endl;
+        return 0;
+    }
 %}
 
 %union {
-    const int Ptr;
+    int Ptr;
 }
 
 %token <Ptr> ID
-// %token <Number> Number
 %token Class
 %type <Ptr> exp
 
@@ -50,6 +53,3 @@ exp:
     | "(" exp ")" {$$ = $2; };
 
 %%
-
-
-// yyparse(...).

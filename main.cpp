@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <streambuf>
+#include <iostream>
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {

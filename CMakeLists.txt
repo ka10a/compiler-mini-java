@@ -17,7 +17,8 @@ BISON_TARGET(
 FLEX_TARGET(
     MyScanner
     lexer.l
-    ${CMAKE_CURRENT_BINARY_DIR}/MiniJavaLexer.hh
+    ${CMAKE_CURRENT_BINARY_DIR}/MiniJavaLexer.cpp
+    COMPILE_FLAGS --header=${CMAKE_BINARY_DIR}/MiniJavaLexer.hh
 )
 
 ADD_FLEX_BISON_DEPENDENCY(MyScanner MyParser)
