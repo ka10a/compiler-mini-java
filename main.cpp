@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
 //        throw std::runtime_error("Failed scanning string");
 //    }
 
-    std::cout << yylex(scanner);
+    YYSTYPE val;
+    std::cout << yylex(&val, scanner);
 
 
     return 0;
