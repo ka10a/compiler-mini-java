@@ -11,6 +11,7 @@ BISON_TARGET(
     parser.y
     ${CMAKE_CURRENT_BINARY_DIR}/MiniJavaParser.cpp
     DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/MiniJavaParser.hh
+        VERBOSE
 )
 
 FLEX_TARGET(

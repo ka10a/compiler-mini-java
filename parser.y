@@ -19,17 +19,20 @@
     //#define yylex yylex( scanner )
 }
 
-%token ID
-%type <void*> Class #TODO: change type to MiniJavaClass
-%type <void> exp
+%union {
+    const int Ptr;
+}
+
+%token <Ptr> ID
+%token number
+%token Class
+%type <Ptr> exp
 
 %%
 
-# TODO: add more expressions
-
 exp:
     "number"
-    | "identifier" {$$ = driver.variables[$1];}
+    | ID {$$ = $1;}
     | exp "+" exp {$$ = $1 + $3; }
     | exp "-" exp {$$ = $1 - $3; }
     | exp "*" exp {$$ = $1 * $3; }
