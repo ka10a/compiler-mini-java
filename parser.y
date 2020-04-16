@@ -22,7 +22,7 @@
     #include <MiniJavaLexer.hh>
     #include <iostream>
 
-    int yyerror( yyscan_t scanner, int& result, const char* msg )
+    int yyerror( yyscan_t scanner, const char* msg )
     {
         std::cerr << "kerror called: '" << msg << "'" << std::endl;
         return 0;
