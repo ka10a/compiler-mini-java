@@ -2,3 +2,6 @@ build*
 *.out
 .idea
 cmake-*
+*.png
+*.jpg
+*.jpeg
