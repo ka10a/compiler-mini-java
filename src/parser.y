@@ -69,7 +69,6 @@ extern yy::parser::symbol_type yylex();
 // %token Type
 // %token MethodDeclarations
 // %token MethodDeclaration
-// %token MethodType
 // %token MethodParameters
 // %token Statements
 // %token Statement
@@ -81,7 +80,7 @@ extern yy::parser::symbol_type yylex();
 
 %%
 Goal:
-	MainClass ClassDeclarations
+    MainClass ClassDeclarations
 ;
 
 MainClass:
@@ -119,28 +118,14 @@ VarDeclaration:
     }
 ;
 
-Type:
-    "int" "[" "]"
-    | "int"
-    | "boolean"
-    | Identifier
-;
-
 MethodDeclarations:
     %empty
     | MethodDeclarations MethodDeclaration
 ;
 
 MethodDeclaration:
-    MethodType Type Identifier "(" MethodParameters ")" "{" VarDeclarations Statements "return" Expression ";" "}" {
+    "public" Type Identifier "(" MethodParameters ")" "{" VarDeclarations Statements "return" Expression ";" "}" {
         std::cout << "MethodDeclaration ";
-    }
-;
-
-
-MethodType:
-    "public" {
-        std::cout << "Public ";
     }
 ;
 
@@ -152,6 +137,13 @@ MethodParameters:
     | MethodParameters "," Type Identifier {
         std::cout << "MethodParameter ";
     }
+;
+
+Type:
+    "int" "[" "]"
+    | "int"
+    | "boolean"
+    | Identifier
 ;
 
 Statements:
