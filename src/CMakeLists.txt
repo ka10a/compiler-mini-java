@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.10)
 
 bison_target(
     parser
-    ${CMAKE_CURRENT_SOURCE_DIR}/parser.y
+    parsing/parser.y
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
     COMPILE_FLAGS "-dg"
 )
 
 flex_target(
     scanner
-    ${CMAKE_CURRENT_SOURCE_DIR}/scanner.l
+    parsing/scanner.l
     ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp
 )
 
@@ -20,7 +20,17 @@ add_executable(
     main.cpp
     ${BISON_parser_OUTPUTS}
     ${FLEX_scanner_OUTPUTS}
+    ast/class_declaration.cpp
+    ast/expressions.cpp
+    ast/goal.cpp
+    ast/identifier.cpp
+    ast/main_class.cpp
+    ast/method_declaration.cpp
+    ast/statements.cpp
+    ast/types.cpp
+    ast/var_declaration.cpp
 )
 
-target_include_directories(compiler-mini-java PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(compiler-mini-java PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(compiler-mini-java PUBLIC ../include/ast)
+target_include_directories(compiler-mini-java PUBLIC ../include/visitors)
