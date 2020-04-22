@@ -1,11 +1,16 @@
 %require "3.5"
 
 %{
-#include <iostream>
 #include <string>
 
 #include <parser.hpp>
 
+GoalPtr goal;
+extern yy::parser::symbol_type yylex();
+
+%}
+
+%code requires {
 #include <class_declaration.hpp>
 #include <expressions.hpp>
 #include <goal.hpp>
@@ -15,10 +20,7 @@
 #include <statements.hpp>
 #include <types.hpp>
 #include <var_declaration.hpp>
-
-extern yy::parser::symbol_type yylex();
-
-%}
+}
 
 %language "c++"
 %define api.value.type variant
@@ -71,180 +73,270 @@ extern yy::parser::symbol_type yylex();
 %token <int> INTEGER_LITERAL
 %token END 0
 
-// %type <Goal> Goal
-// %type <MainClass> MainClass
-// %type <ClassDeclarations> ClassDeclarations
-// %type <ClassDeclarationPtr> ClassDeclaration
-// %type <IdentifierPtr> Extends
-// %type <VarDeclarations> VarDeclarations
-// %type <VarDeclarationPtr> VarDeclaration
-// %type <TypePtr> Type
-// %type <MethodDeclarations> MethodDeclarations
-// %type <MethodDeclarationPtr> MethodDeclaration
-// %type <VarDeclarations> MethodArgs
-// %type <Statements> Statements
-// %type <StatementPtr> Statement
-// %type <ExpressionPtr> Expression
-// %type <Expressions> Expressions
-// %type <IdentifierPtr> Identifier
+%type <GoalPtr> Goal
+%type <MainClassPtr> MainClass
+%type <ClassDeclarations> ClassDeclarations
+%type <ClassDeclarationPtr> ClassDeclaration
+%type <IdentifierPtr> Extends
+%type <VarDeclarations> VarDeclarations
+%type <VarDeclarationPtr> VarDeclaration
+%type <TypePtr> Type
+%type <MethodDeclarations> MethodDeclarations
+%type <MethodDeclarationPtr> MethodDeclaration
+%type <VarDeclarations> MethodArgs
+%type <Statements> Statements
+%type <StatementPtr> Statement
+%type <ExpressionPtr> Expression
+%type <Expressions> Expressions
+%type <IdentifierPtr> Identifier
 
-// %start Goal
+%start Goal
 
 %%
 Goal:
-    MainClass ClassDeclarations
+    MainClass ClassDeclarations {
+        goal = std::make_shared<Goal>(std::move($1), std::move($2));
+    }
 ;
 
 MainClass:
     "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}" {
-        std::cout << "MainClass ";
+        $$ = std::make_shared<MainClass>(
+            std::move($2),
+            std::move($12),
+            std::move($15)
+        );
     }
 ;
 
 ClassDeclarations:
-    %empty
-    | ClassDeclarations ClassDeclaration
+    %empty {
+        $$ = ClassDeclarations();
+    }
+    | ClassDeclarations ClassDeclaration {
+        $1.push_back(std::move($2));
+        $$ = std::move($1);
+    }
 ;
 
 ClassDeclaration:
     "class" Identifier Extends "{" VarDeclarations MethodDeclarations "}" {
-        std::cout << "ClassDeclaration ";
+        $$ = std::make_shared<ClassDeclaration>(
+            std::move($2),
+            std::move($3),
+            std::move($5),
+            std::move($6)
+        );
     }
 ;
 
 Extends:
-    %empty
+    %empty {
+        $$ = nullptr;
+    }
     | "extends" Identifier {
-        std::cout << "Extends ";
+        $$ = std::move($2);
     }
 ;
 
 VarDeclarations:
-    %empty
-    | VarDeclarations VarDeclaration
+    %empty {
+        $$ = VarDeclarations();
+    }
+    | VarDeclarations VarDeclaration {
+        $1.push_back(std::move($2));
+        $$ = std::move($1);
+    }
 ;
 
 VarDeclaration:
     Type Identifier ";" {
-        std::cout << "VarDeclaration ";
+        $$ = std::make_shared<VarDeclaration>(std::move($1), std::move($2));
     }
 ;
 
 MethodDeclarations:
-    %empty
-    | MethodDeclarations MethodDeclaration
+    %empty {
+        $$ = MethodDeclarations();
+    }
+    | MethodDeclarations MethodDeclaration {
+        $1.push_back(std::move($2));
+        $$ = std::move($1);
+    }
 ;
 
 MethodDeclaration:
     "public" Type Identifier "(" MethodArgs ")" "{" VarDeclarations Statements "return" Expression ";" "}" {
-        std::cout << "MethodDeclaration ";
+        $$ = std::make_shared<MethodDeclaration>(
+            std::move($2),
+            std::move($3),
+            std::move($5),
+            std::move($8),
+            std::move($9),
+            std::move($11)
+        );
     }
 ;
 
 MethodArgs:
-    %empty
+    %empty {
+        $$ = VarDeclarations();
+    }
     | Type Identifier {
-        std::cout << "MethodArg ";
+        $$ = VarDeclarations();
+        $$.push_back(
+            std::make_shared<VarDeclaration>(
+                std::move($1),
+                std::move($2)
+            )
+       );
     }
     | MethodArgs "," Type Identifier {
-        std::cout << "MethodArg ";
+        $1.push_back(
+            std::make_shared<VarDeclaration>(
+                std::move($3),
+                std::move($4)
+            )
+        );
+        $$ = std::move($1);
     }
 ;
 
 Type:
-    "int" "[" "]"
-    | "int"
-    | "boolean"
-    | Identifier
+    "int" "[" "]" {
+        $$ = std::make_shared<IntArrayType>();
+    }
+    | "int" {
+        $$ = std::make_shared<IntType>();
+    }
+    | "boolean" {
+        $$ = std::make_shared<BoolType>();
+    }
+    | Identifier {
+        $$ = std::make_shared<IdentifierType>(std::move($1));
+    }
 ;
 
 Statements:
-    %empty
-    | Statement Statements
+    %empty {
+        $$ = Statements();
+    }
+    | Statements Statement {
+        $1.push_back(std::move($2));
+        $$ = std::move($1);
+    }
 ;
 
 Statement:
-    "{" Statements "}"
+    "{" Statements "}" {
+        $$ = std::make_shared<StatementList>(std::move($2));
+    }
     | "if" "(" Expression ")" Statement "else" Statement {
-        std::cout << "If ";
+        $$ = std::make_shared<IfElseStatement>(
+            std::move($3),
+            std::move($5),
+            std::move($7)
+        );
     }
     | "while" "(" Expression ")" Statement {
-        std::cout << "While ";
+        $$ = std::make_shared<WhileStatement>(
+            std::move($3),
+            std::move($5)
+        );
     }
     | "System.out.println" "(" Expression ")" ";" {
-        std::cout << "Print ";
+        $$ = std::make_shared<PrintStatement>(std::move($3));
     }
     | Identifier "=" Expression ";" {
-        std::cout << "Assignment ";
+        $$ = std::make_shared<AssignmentStatement>(
+            std::move($1),
+            std::move($3)
+        );
     }
     | Identifier "[" Expression "]" "=" Expression ";" {
-        std::cout << "ArrayAssignment ";
+        $$ = std::make_shared<ArrayAssignmentStatement>(
+            std::move($1),
+            std::move($3),
+            std::move($6)
+        );
     }
 ;
 
 Expression:
     Expression "&&" Expression {
-        std::cout << "And ";
+        $$ = std::make_shared<AndExpression>(std::move($1), std::move($3));
     }
     | Expression "<" Expression {
-        std::cout << "Less ";
+        $$ = std::make_shared<LessExpression>(std::move($1), std::move($3));
     }
     | Expression "+" Expression {
-        std::cout << "Plus ";
+        $$ = std::make_shared<AddExpression>(std::move($1), std::move($3));
     }
     | Expression "-" Expression {
-        std::cout << "Minus ";
+        $$ = std::make_shared<SubtractExpression>(std::move($1), std::move($3));
     }
     | Expression "*" Expression {
-        std::cout << "Multiply ";
+        $$ = std::make_shared<MultiplicateExpression>(std::move($1), std::move($3));
     }
     | Expression "[" Expression "]" {
-        std::cout << "ArrayExpression ";
+        $$ = std::make_shared<ArrayExpression>(std::move($1), std::move($3));
     }
     | Expression "." "length" {
-        std::cout << "Length ";
+        $$ = std::make_shared<LengthExpression>(std::move($1));
     }
     | Expression "." Identifier "(" Expressions ")" {
-        std::cout << "ExpressionCall ";
+        $$ = std::make_shared<MethodCallExpression>(
+            std::move($1),
+            std::move($3),
+            std::move($5)
+        );
     }
     | INTEGER_LITERAL {
-        std::cout << "Int " << $1 << " ";
+        $$ = std::make_shared<IntExpression>($1);
     }
     | "true" {
-        std::cout << "True ";
+        $$ = std::make_shared<BoolExpression>(true);
     }
     | "false" {
-        std::cout << "False ";
+        $$ = std::make_shared<BoolExpression>(false);
     }
-    | Identifier
+    | Identifier {
+        $$ = std::make_shared<IdentifierExpression>(std::move($1));
+    }
     | "this" {
-        std::cout << "This ";
+        $$ = std::make_shared<ThisExpression>();
     }
     | "new" "int" "[" Expression "]" {
-        std::cout << "NewIntArray ";
+        $$ = std::make_shared<NewIntArrayExpression>(std::move($4));
     }
     | "new" Identifier "(" ")" {
-        std::cout << "New ";
+        $$ = std::make_shared<NewExpression>(std::move($2));
     }
     | "!" Expression {
-        std::cout << "Not ";
+        $$ = std::make_shared<NotExpression>(std::move($2));
     }
-    | "(" Expression ")"
+    | "(" Expression ")" {
+        $$ = std::make_shared<BetweenBracketsExpression>(std::move($2));
+    }
 ;
 
 Expressions:
-    %empty
+    %empty {
+        $$ = Expressions();
+    }
     | Expression {
-         std::cout << "Expression ";
+        $$ = Expressions();
+        $$.push_back(std::move($1));
     }
     | Expressions "," Expression {
-        std::cout << "Expression ";
+        $1.push_back(std::move($3));
+        $$ = std::move($1);
     }
 ;
 
 Identifier:
     IDENTIFIER {
-        std::cout << "Id " << $1 << " ";
+        $$ = std::make_shared<Identifier>(std::move($1));
     }
 ;
 %%
