@@ -14,7 +14,7 @@
 #include <../../include/ast/method_declaration.hpp>
 #include <../../include/ast/statements.hpp>
 #include <../../include/ast/types.hpp>
-#include <../../include/ast/xvar_declaration.hpp>
+#include <../../include/ast/var_declaration.hpp>
 
 GoalPtr goal;
 extern yy::parser::symbol_type yylex();
@@ -94,7 +94,7 @@ extern yy::parser::symbol_type yylex();
 %%
 Goal:
     MainClass ClassDeclarations {
-            *goal = std::make_shared<Goal>(std::move($1), std::move($2));
+            goal = std::make_shared<Goal>(std::move($1), std::move($2));
         }
 ;
 
