@@ -21,5 +21,5 @@ private:
     MethodDeclarations methods_;
 };
 
-using ClassDeclarationPtr = std::unique_ptr<ClassDeclaration>;
+using ClassDeclarationPtr = std::shared_ptr<ClassDeclaration>;
 using ClassDeclarations = std::vector<ClassDeclarationPtr>;

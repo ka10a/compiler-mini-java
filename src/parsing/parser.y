@@ -1,9 +1,20 @@
 %require "3.5"
 
 %{
-#include <string>
 #include <iostream>
-#include "parser.hpp"
+#include <string>
+
+#include <parser.hpp>
+
+#include <class_declaration.hpp>
+#include <expressions.hpp>
+#include <goal.hpp>
+#include <identifier.hpp>
+#include <main_class.hpp>
+#include <method_declaration.hpp>
+#include <statements.hpp>
+#include <types.hpp>
+#include <var_declaration.hpp>
 
 extern yy::parser::symbol_type yylex();
 
@@ -58,23 +69,24 @@ extern yy::parser::symbol_type yylex();
 
 %token <std::string> IDENTIFIER
 %token <int> INTEGER_LITERAL
+%token END 0
 
-// %token Goal
-// %token MainClass
-// %token ClassDeclarations
-// %token ClassDeclaration
-// %token Extends
-// %token VarDeclarations
-// %token VarDeclaration
-// %token Type
-// %token MethodDeclarations
-// %token MethodDeclaration
-// %token MethodParameters
-// %token Statements
-// %token Statement
-// %token Expression
-// %token Expressions
-// %token Identifier
+// %type <Goal> Goal
+// %type <MainClass> MainClass
+// %type <ClassDeclarations> ClassDeclarations
+// %type <ClassDeclarationPtr> ClassDeclaration
+// %type <IdentifierPtr> Extends
+// %type <VarDeclarations> VarDeclarations
+// %type <VarDeclarationPtr> VarDeclaration
+// %type <TypePtr> Type
+// %type <MethodDeclarations> MethodDeclarations
+// %type <MethodDeclarationPtr> MethodDeclaration
+// %type <VarDeclarations> MethodArgs
+// %type <Statements> Statements
+// %type <StatementPtr> Statement
+// %type <ExpressionPtr> Expression
+// %type <Expressions> Expressions
+// %type <IdentifierPtr> Identifier
 
 // %start Goal
 
@@ -124,18 +136,18 @@ MethodDeclarations:
 ;
 
 MethodDeclaration:
-    "public" Type Identifier "(" MethodParameters ")" "{" VarDeclarations Statements "return" Expression ";" "}" {
+    "public" Type Identifier "(" MethodArgs ")" "{" VarDeclarations Statements "return" Expression ";" "}" {
         std::cout << "MethodDeclaration ";
     }
 ;
 
-MethodParameters:
+MethodArgs:
     %empty
     | Type Identifier {
-        std::cout << "MethodParameter ";
+        std::cout << "MethodArg ";
     }
-    | MethodParameters "," Type Identifier {
-        std::cout << "MethodParameter ";
+    | MethodArgs "," Type Identifier {
+        std::cout << "MethodArg ";
     }
 ;
 

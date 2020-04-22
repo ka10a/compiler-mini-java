@@ -25,5 +25,5 @@ private:
     ExpressionPtr return_expression_;
 };
 
-using MethodDeclarationPtr = std::unique_ptr<MethodDeclaration>;
+using MethodDeclarationPtr = std::shared_ptr<MethodDeclaration>;
 using MethodDeclarations = std::vector<MethodDeclarationPtr>;

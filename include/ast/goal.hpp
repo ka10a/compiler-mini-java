@@ -16,4 +16,4 @@ private:
     ClassDeclarations class_declarations_;
 };
 
-using GoalPtr = std::unique_ptr<Goal>;
+using GoalPtr = std::shared_ptr<Goal>;
