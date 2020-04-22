@@ -9,12 +9,12 @@
 
 class Statement : public ASTNode {};
 
-using StatementPtr = std::unique_ptr<Statement>;
+using StatementPtr = std::shared_ptr<Statement>;
 using Statements = std::vector<StatementPtr>;
 
 class StatementList : public Statement {
 public:
-    StatementList(Statements statements);
+    explicit StatementList(Statements statements);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -44,7 +44,7 @@ private:
 
 class PrintStatement : public Statement {
 public:
-    PrintStatement(ExpressionPtr value);
+    explicit PrintStatement(ExpressionPtr value);
     void Accept(const Visitor& visitor) const override;
 
 private:

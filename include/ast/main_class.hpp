@@ -9,7 +9,7 @@
 class MainClass : public ASTNode {
 public:
     MainClass(IdentifierPtr class_name, IdentifierPtr args_name, StatementPtr body);
-    void Accept(const Visitor&) const override;
+    void Accept(const Visitor& visitor) const override;
 
 private:
     IdentifierPtr class_name_;
@@ -17,4 +17,4 @@ private:
     StatementPtr body_;
 };
 
-using MainClassPtr = std::unique_ptr<MainClass>;
+using MainClassPtr = std::shared_ptr<MainClass>;

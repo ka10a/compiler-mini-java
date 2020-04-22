@@ -8,7 +8,7 @@
 
 class Expression : public ASTNode {};
 
-using ExpressionPtr = std::unique_ptr<Expression>;
+using ExpressionPtr = std::shared_ptr<Expression>;
 using Expressions = std::vector<ExpressionPtr>;
 
 class AndExpression : public Expression {
@@ -73,7 +73,7 @@ private:
 
 class LengthExpression : public Expression {
 public:
-    LengthExpression(ExpressionPtr container);
+    explicit LengthExpression(ExpressionPtr container);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -93,7 +93,7 @@ private:
 
 class IntExpression : public Expression {
 public:
-    IntExpression(int value);
+    explicit IntExpression(int value);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -102,7 +102,7 @@ private:
 
 class BoolExpression : public Expression {
 public:
-    BoolExpression(bool value);
+    explicit BoolExpression(bool value);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -111,7 +111,7 @@ private:
 
 class IdentifierExpression : public Expression {
 public:
-    IdentifierExpression(IdentifierPtr variable_name);
+    explicit IdentifierExpression(IdentifierPtr variable_name);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -126,7 +126,7 @@ public:
 
 class NewIntArrayExpression : public Expression {
 public:
-    NewIntArrayExpression(ExpressionPtr size);
+    explicit NewIntArrayExpression(ExpressionPtr size);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -135,7 +135,7 @@ private:
 
 class NewExpression : public Expression {
 public:
-    NewExpression(IdentifierPtr class_name);
+    explicit NewExpression(IdentifierPtr class_name);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -144,7 +144,7 @@ private:
 
 class NotExpression : public Expression {
 public:
-    NotExpression(ExpressionPtr expression);
+    explicit NotExpression(ExpressionPtr expression);
     void Accept(const Visitor& visitor) const override;
 
 private:
@@ -153,7 +153,7 @@ private:
 
 class BetweenBracketsExpression : public Expression {
 public:
-    BetweenBracketsExpression(ExpressionPtr expression);
+    explicit BetweenBracketsExpression(ExpressionPtr expression);
     void Accept(const Visitor& visitor) const override;
 
 private:

@@ -16,5 +16,5 @@ private:
     IdentifierPtr name_;
 };
 
-using VarDeclarationPtr = std::unique_ptr<VarDeclaration>;
+using VarDeclarationPtr = std::shared_ptr<VarDeclaration>;
 using VarDeclarations = std::vector<VarDeclarationPtr>;

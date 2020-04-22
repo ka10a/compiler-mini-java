@@ -2,7 +2,7 @@
 
 %{
 #include <iostream>
-#include "parser.hpp"
+#include <parser.hpp>
 
 #define YY_DECL yy::parser::symbol_type yylex()
 

@@ -7,7 +7,7 @@
 
 class Type : public ASTNode {};
 
-using TypePtr = std::unique_ptr<Type>;
+using TypePtr = std::shared_ptr<Type>;
 
 class IntType : public Type {
 public:
@@ -29,7 +29,7 @@ public:
 
 class IdentifierType : public Type {
 public:
-    IdentifierType(IdentifierPtr class_name);
+    explicit IdentifierType(IdentifierPtr class_name);
     void Accept(const Visitor& visitor) const override;
 
 private:
