@@ -33,6 +33,13 @@ extern yy::parser::symbol_type yylex();
 %token MINUS "-"
 %token MUL "*"
 
+%nonassoc NOT
+%left AND
+%left LESS
+%left PLUS
+%left MINUS
+%left MUL
+
 %token OCURLY "{"
 %token CCURLY "}"
 %token OSQUARE "["
@@ -43,6 +50,9 @@ extern yy::parser::symbol_type yylex();
 %token COMMA ","
 %token DOT "."
 %token SCOLON ";"
+
+%right OSQUARE
+%right DOT
 
 %token STRING "String"
 
@@ -221,9 +231,10 @@ Statements:
     %empty {
         $$ = Statements();
     }
-    | Statements Statement {
-        $1.push_back(std::move($2));
-        $$ = std::move($1);
+    | Statement Statements {
+        // TODO: Order of statements is reversed, change vector to deque and make push_front.
+        $2.push_back(std::move($1));
+        $$ = std::move($2);
     }
 ;
 
