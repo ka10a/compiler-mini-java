@@ -5,6 +5,7 @@ bison_target(
     parsing/parser.y
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
     COMPILE_FLAGS "-dg"
+    VERBOSE
 )
 
 flex_target(
