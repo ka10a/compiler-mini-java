@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include <ast_node.hpp>
-#include <identifier.hpp>
-#include <statements.hpp>
+#include <ast/ast_node.hpp>
+#include <ast/identifier.hpp>
+#include <ast/statements.hpp>
 
 class MainClass : public ASTNode {
 public:

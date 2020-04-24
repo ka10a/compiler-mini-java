@@ -1,5 +1,5 @@
-#include <identifier.hpp>
-#include <visitor.hpp>
+#include <ast/identifier.hpp>
+#include <visitors/visitor.hpp>
 
 Identifier::Identifier(std::string name) : name_(std::move(name)) {
 }

@@ -1,5 +1,5 @@
-#include <class_declaration.hpp>
-#include <visitor.hpp>
+#include <ast/class_declaration.hpp>
+#include <visitors/visitor.hpp>
 
 ClassDeclaration::ClassDeclaration(IdentifierPtr class_name, IdentifierPtr extends_class_name,
                                    VarDeclarations variables, MethodDeclarations methods)

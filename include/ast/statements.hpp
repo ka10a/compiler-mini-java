@@ -3,9 +3,9 @@
 #include <vector>
 #include <memory>
 
-#include <ast_node.hpp>
-#include <expressions.hpp>
-#include <identifier.hpp>
+#include <ast/ast_node.hpp>
+#include <ast/expressions.hpp>
+#include <ast/identifier.hpp>
 
 class Statement : public ASTNode {};
 

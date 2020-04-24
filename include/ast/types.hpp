@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include <ast_node.hpp>
-#include <identifier.hpp>
+#include <ast/ast_node.hpp>
+#include <ast/identifier.hpp>
 
 class Type : public ASTNode {};
 

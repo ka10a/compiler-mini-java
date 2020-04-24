@@ -1,5 +1,5 @@
-#include <var_declaration.hpp>
-#include <visitor.hpp>
+#include <ast/var_declaration.hpp>
+#include <visitors/visitor.hpp>
 
 VarDeclaration::VarDeclaration(TypePtr type, IdentifierPtr name)
     : type_(std::move(type)), name_(std::move(name)) {

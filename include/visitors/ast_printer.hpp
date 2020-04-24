@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include <visitor.hpp>
+#include <visitors/visitor.hpp>
 
 class ASTPrinter : public Visitor {
 public:
