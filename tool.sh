@@ -16,5 +16,4 @@ mkdir build
 cd build
 cmake ..
 make compiler-mini-java
-dot -Tpng src/parser.gv -o ../graph.png
 ./compiler-mini-java < "$PATH_TO_JAVA_FILE"

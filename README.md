@@ -1,9 +1,9 @@
 # MiniJava Compiler
 
-To build project and compile a file from `samples` folder:
+To build project, parse a file from `samples` folder and draw grammar:
 
 ```
 ./tool.sh filename.java
 ```
 
-It will also draw an AST image and save it to `graph.png`. 
+Visualized grammar will in `grammar.png`

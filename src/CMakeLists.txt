@@ -35,3 +35,11 @@ add_executable(
 
 target_include_directories(compiler-mini-java PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(compiler-mini-java PUBLIC ../include)
+
+add_custom_target(
+    grammar-tree
+    COMMAND dot -Tpng ${CMAKE_CURRENT_BINARY_DIR}/parser.gv -o ${CMAKE_CURRENT_SOURCE_DIR}/../grammar.png
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
+)
+
+add_dependencies(compiler-mini-java grammar-tree)
