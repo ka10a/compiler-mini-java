@@ -30,6 +30,7 @@ add_executable(
     ast/statements.cpp
     ast/types.cpp
     ast/var_declaration.cpp
+    visitors/ast_printer.cpp
 )
 
 target_include_directories(compiler-mini-java PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
