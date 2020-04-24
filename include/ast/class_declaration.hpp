@@ -13,6 +13,10 @@ public:
     ClassDeclaration(IdentifierPtr class_name, IdentifierPtr extends_class_name,
                      VarDeclarations variables, MethodDeclarations methods);
     void Accept(Visitor& visitor) const override;
+    const IdentifierPtr& GetClassName() const;
+    const IdentifierPtr& GetExtendsClassName() const;
+    const VarDeclarations& GetVariables() const;
+    const MethodDeclarations& GetMethods() const;
 
 private:
     IdentifierPtr class_name_;

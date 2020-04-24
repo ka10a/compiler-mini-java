@@ -8,3 +8,15 @@ MainClass::MainClass(IdentifierPtr class_name, IdentifierPtr args_name, Statemen
 void MainClass::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
+
+const IdentifierPtr& MainClass::GetClassName() const {
+    return class_name_;
+}
+
+const IdentifierPtr& MainClass::GetArgsName() const {
+    return args_name_;
+}
+
+const StatementPtr& MainClass::GetBody() const {
+    return body_;
+}

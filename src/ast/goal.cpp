@@ -8,3 +8,11 @@ Goal::Goal(MainClassPtr main_class, ClassDeclarations class_declarations)
 void Goal::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
+
+const MainClassPtr& Goal::GetMainClass() const {
+    return main_class_;
+}
+
+const ClassDeclarations& Goal::GetClassDeclarations() const {
+    return class_declarations_;
+}

@@ -19,3 +19,7 @@ IdentifierType::IdentifierType(IdentifierPtr class_name) : class_name_(std::move
 void IdentifierType::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
+
+const IdentifierPtr& IdentifierType::GetClassName() const {
+    return class_name_;
+}

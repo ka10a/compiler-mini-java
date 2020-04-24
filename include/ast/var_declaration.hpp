@@ -10,6 +10,8 @@ class VarDeclaration : public ASTNode {
 public:
     VarDeclaration(TypePtr type, IdentifierPtr name);
     void Accept(Visitor& visitor) const override;
+    const TypePtr& GetType() const;
+    const IdentifierPtr& GetName() const;
 
 private:
     TypePtr type_;

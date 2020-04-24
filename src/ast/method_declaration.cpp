@@ -15,3 +15,27 @@ MethodDeclaration::MethodDeclaration(TypePtr return_type, IdentifierPtr name, Va
 void MethodDeclaration::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
+
+const TypePtr& MethodDeclaration::GetReturnType() const {
+    return return_type_;
+}
+
+const IdentifierPtr& MethodDeclaration::GetName() const {
+    return name_;
+}
+
+const VarDeclarations& MethodDeclaration::GetArgs() const {
+    return args_;
+}
+
+const VarDeclarations& MethodDeclaration::GetVariables() const {
+    return variables_;
+}
+
+const Statements& MethodDeclaration::GetStatements() const {
+    return statements_;
+}
+
+const ExpressionPtr& MethodDeclaration::GetReturnExpression() const {
+    return return_expression_;
+}

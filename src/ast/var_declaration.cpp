@@ -8,3 +8,11 @@ VarDeclaration::VarDeclaration(TypePtr type, IdentifierPtr name)
 void VarDeclaration::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
+
+const TypePtr& VarDeclaration::GetType() const {
+    return type_;
+}
+
+const IdentifierPtr& VarDeclaration::GetName() const {
+    return name_;
+}

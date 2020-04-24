@@ -31,6 +31,7 @@ class IdentifierType : public Type {
 public:
     explicit IdentifierType(IdentifierPtr class_name);
     void Accept(Visitor& visitor) const override;
+    const IdentifierPtr& GetClassName() const;
 
 private:
     IdentifierPtr class_name_;
