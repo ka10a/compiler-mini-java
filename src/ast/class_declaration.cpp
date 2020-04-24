@@ -9,6 +9,6 @@ ClassDeclaration::ClassDeclaration(IdentifierPtr class_name, IdentifierPtr exten
       methods_(std::move(methods)) {
 }
 
-void ClassDeclaration::Accept(const Visitor& visitor) const {
+void ClassDeclaration::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }

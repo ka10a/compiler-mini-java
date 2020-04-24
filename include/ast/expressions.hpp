@@ -14,7 +14,7 @@ using Expressions = std::vector<ExpressionPtr>;
 class AndExpression : public Expression {
 public:
     AndExpression(ExpressionPtr lhs, ExpressionPtr rhs);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr lhs_;
@@ -24,7 +24,7 @@ private:
 class LessExpression : public Expression {
 public:
     LessExpression(ExpressionPtr lhs, ExpressionPtr rhs);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr lhs_;
@@ -34,7 +34,7 @@ private:
 class AddExpression : public Expression {
 public:
     AddExpression(ExpressionPtr lhs, ExpressionPtr rhs);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr lhs_;
@@ -44,7 +44,7 @@ private:
 class SubtractExpression : public Expression {
 public:
     SubtractExpression(ExpressionPtr lhs, ExpressionPtr rhs);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr lhs_;
@@ -54,7 +54,7 @@ private:
 class MultiplicateExpression : public Expression {
 public:
     MultiplicateExpression(ExpressionPtr lhs, ExpressionPtr rhs);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr lhs_;
@@ -64,7 +64,7 @@ private:
 class ArrayExpression : public Expression {
 public:
     ArrayExpression(ExpressionPtr array, ExpressionPtr idx);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr array_;
@@ -74,7 +74,7 @@ private:
 class LengthExpression : public Expression {
 public:
     explicit LengthExpression(ExpressionPtr container);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr container_;
@@ -83,7 +83,7 @@ private:
 class MethodCallExpression : public Expression {
 public:
     MethodCallExpression(ExpressionPtr class_entity, IdentifierPtr method_name, Expressions params);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr class_entity_;
@@ -94,7 +94,7 @@ private:
 class IntExpression : public Expression {
 public:
     explicit IntExpression(int value);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     int value_;
@@ -103,7 +103,7 @@ private:
 class BoolExpression : public Expression {
 public:
     explicit BoolExpression(bool value);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     bool value_;
@@ -112,7 +112,7 @@ private:
 class IdentifierExpression : public Expression {
 public:
     explicit IdentifierExpression(IdentifierPtr variable_name);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     IdentifierPtr variable_name_;
@@ -121,13 +121,13 @@ private:
 class ThisExpression : public Expression {
 public:
     ThisExpression() = default;
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 };
 
 class NewIntArrayExpression : public Expression {
 public:
     explicit NewIntArrayExpression(ExpressionPtr size);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr size_;
@@ -136,7 +136,7 @@ private:
 class NewExpression : public Expression {
 public:
     explicit NewExpression(IdentifierPtr class_name);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     IdentifierPtr class_name_;
@@ -145,7 +145,7 @@ private:
 class NotExpression : public Expression {
 public:
     explicit NotExpression(ExpressionPtr expression);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr expression_;
@@ -154,7 +154,7 @@ private:
 class BetweenBracketsExpression : public Expression {
 public:
     explicit BetweenBracketsExpression(ExpressionPtr expression);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr expression_;

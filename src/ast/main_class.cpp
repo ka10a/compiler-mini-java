@@ -5,6 +5,6 @@ MainClass::MainClass(IdentifierPtr class_name, IdentifierPtr args_name, Statemen
     : class_name_(std::move(class_name)), args_name_(std::move(args_name)), body_(std::move(body)) {
 }
 
-void MainClass::Accept(const Visitor& visitor) const {
+void MainClass::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }

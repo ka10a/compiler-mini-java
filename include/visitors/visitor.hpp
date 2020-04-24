@@ -12,44 +12,44 @@
 
 class Visitor {
 public:
-    virtual void Visit(const Goal&) const = 0;
-    virtual void Visit(const MainClass&) const = 0;
-    virtual void Visit(const ClassDeclaration&) const = 0;
-    virtual void Visit(const MethodDeclaration&) const = 0;
-    virtual void Visit(const VarDeclaration&) const = 0;
+    virtual void Visit(const Goal&) = 0;
+    virtual void Visit(const MainClass&) = 0;
+    virtual void Visit(const ClassDeclaration&) = 0;
+    virtual void Visit(const MethodDeclaration&) = 0;
+    virtual void Visit(const VarDeclaration&) = 0;
 
-    virtual void Visit(const IntType&) const = 0;
-    virtual void Visit(const BoolType&) const = 0;
-    virtual void Visit(const IntArrayType&) const = 0;
-    virtual void Visit(const IdentifierType&) const = 0;
+    virtual void Visit(const IntType&) = 0;
+    virtual void Visit(const BoolType&) = 0;
+    virtual void Visit(const IntArrayType&) = 0;
+    virtual void Visit(const IdentifierType&) = 0;
 
-    virtual void Visit(const StatementList&) const = 0;
-    virtual void Visit(const IfElseStatement&) const = 0;
-    virtual void Visit(const WhileStatement&) const = 0;
-    virtual void Visit(const PrintStatement&) const = 0;
-    virtual void Visit(const AssignmentStatement&) const = 0;
-    virtual void Visit(const ArrayAssignmentStatement&) const = 0;
+    virtual void Visit(const StatementList&) = 0;
+    virtual void Visit(const IfElseStatement&) = 0;
+    virtual void Visit(const WhileStatement&) = 0;
+    virtual void Visit(const PrintStatement&) = 0;
+    virtual void Visit(const AssignmentStatement&) = 0;
+    virtual void Visit(const ArrayAssignmentStatement&) = 0;
 
-    virtual void Visit(const AndExpression&) const = 0;
-    virtual void Visit(const LessExpression&) const = 0;
-    virtual void Visit(const AddExpression&) const = 0;
-    virtual void Visit(const SubtractExpression&) const = 0;
-    virtual void Visit(const MultiplicateExpression&) const = 0;
+    virtual void Visit(const AndExpression&) = 0;
+    virtual void Visit(const LessExpression&) = 0;
+    virtual void Visit(const AddExpression&) = 0;
+    virtual void Visit(const SubtractExpression&) = 0;
+    virtual void Visit(const MultiplicateExpression&) = 0;
 
-    virtual void Visit(const ArrayExpression&) const = 0;
-    virtual void Visit(const LengthExpression&) const = 0;
-    virtual void Visit(const MethodCallExpression&) const = 0;
+    virtual void Visit(const ArrayExpression&) = 0;
+    virtual void Visit(const LengthExpression&) = 0;
+    virtual void Visit(const MethodCallExpression&) = 0;
 
-    virtual void Visit(const IntExpression&) const = 0;
-    virtual void Visit(const BoolExpression&) const = 0;
-    virtual void Visit(const IdentifierExpression&) const = 0;
+    virtual void Visit(const IntExpression&) = 0;
+    virtual void Visit(const BoolExpression&) = 0;
+    virtual void Visit(const IdentifierExpression&) = 0;
 
-    virtual void Visit(const ThisExpression&) const = 0;
-    virtual void Visit(const NewIntArrayExpression&) const = 0;
-    virtual void Visit(const NewExpression&) const = 0;
+    virtual void Visit(const ThisExpression&) = 0;
+    virtual void Visit(const NewIntArrayExpression&) = 0;
+    virtual void Visit(const NewExpression&) = 0;
 
-    virtual void Visit(const NotExpression&) const = 0;
-    virtual void Visit(const BetweenBracketsExpression&) const = 0;
+    virtual void Visit(const NotExpression&) = 0;
+    virtual void Visit(const BetweenBracketsExpression&) = 0;
 
-    virtual void Visit(const Identifier&) const = 0;
+    virtual void Visit(const Identifier&) = 0;
 };

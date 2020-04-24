@@ -14,7 +14,7 @@ public:
     MethodDeclaration(TypePtr return_type, IdentifierPtr name, VarDeclarations args,
                       VarDeclarations variables, Statements statements,
                       ExpressionPtr return_expression);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     TypePtr return_type_;

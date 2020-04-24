@@ -8,7 +8,7 @@
 class Identifier : public ASTNode {
 public:
     explicit Identifier(std::string name);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     std::string name_;

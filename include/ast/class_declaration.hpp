@@ -12,7 +12,7 @@ class ClassDeclaration : public ASTNode {
 public:
     ClassDeclaration(IdentifierPtr class_name, IdentifierPtr extends_class_name,
                      VarDeclarations variables, MethodDeclarations methods);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     IdentifierPtr class_name_;
