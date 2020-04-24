@@ -15,6 +15,12 @@ public:
                       VarDeclarations variables, Statements statements,
                       ExpressionPtr return_expression);
     void Accept(Visitor& visitor) const override;
+    const TypePtr& GetReturnType() const;
+    const IdentifierPtr& GetName() const;
+    const VarDeclarations& GetArgs() const;
+    const VarDeclarations& GetVariables() const;
+    const Statements& GetStatements() const;
+    const ExpressionPtr& GetReturnExpression() const;
 
 private:
     TypePtr return_type_;

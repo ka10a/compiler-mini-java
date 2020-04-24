@@ -12,3 +12,19 @@ ClassDeclaration::ClassDeclaration(IdentifierPtr class_name, IdentifierPtr exten
 void ClassDeclaration::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
+
+const IdentifierPtr& ClassDeclaration::GetClassName() const {
+    return class_name_;
+}
+
+const IdentifierPtr& ClassDeclaration::GetExtendsClassName() const {
+    return extends_class_name_;
+}
+
+const VarDeclarations& ClassDeclaration::GetVariables() const {
+    return variables_;
+}
+
+const MethodDeclarations& ClassDeclaration::GetMethods() const {
+    return methods_;
+}
