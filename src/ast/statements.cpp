@@ -1,5 +1,5 @@
-#include <statements.hpp>
-#include <visitor.hpp>
+#include <ast/statements.hpp>
+#include <visitors/visitor.hpp>
 
 StatementList::StatementList(Statements statements) : statements_(std::move(statements)) {
 }

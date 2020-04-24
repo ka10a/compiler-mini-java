@@ -34,5 +34,4 @@ add_executable(
 )
 
 target_include_directories(compiler-mini-java PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_include_directories(compiler-mini-java PUBLIC ../include/ast)
-target_include_directories(compiler-mini-java PUBLIC ../include/visitors)
+target_include_directories(compiler-mini-java PUBLIC ../include)

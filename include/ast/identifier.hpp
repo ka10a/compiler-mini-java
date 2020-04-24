@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-#include <ast_node.hpp>
+#include <ast/ast_node.hpp>
 
 class Identifier : public ASTNode {
 public:

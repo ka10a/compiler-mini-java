@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include <main_class.hpp>
-#include <class_declaration.hpp>
+#include <ast/main_class.hpp>
+#include <ast/class_declaration.hpp>
 
 class Goal : public ASTNode {
 public:

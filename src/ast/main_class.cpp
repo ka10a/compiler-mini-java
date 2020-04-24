@@ -1,5 +1,5 @@
-#include <main_class.hpp>
-#include <visitor.hpp>
+#include <ast/main_class.hpp>
+#include <visitors/visitor.hpp>
 
 MainClass::MainClass(IdentifierPtr class_name, IdentifierPtr args_name, StatementPtr body)
     : class_name_(std::move(class_name)), args_name_(std::move(args_name)), body_(std::move(body)) {

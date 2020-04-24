@@ -1,5 +1,5 @@
-#include <types.hpp>
-#include <visitor.hpp>
+#include <ast/types.hpp>
+#include <visitors/visitor.hpp>
 
 void IntType::Accept(Visitor& visitor) const {
     visitor.Visit(*this);

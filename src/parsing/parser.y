@@ -11,15 +11,15 @@ extern yy::parser::symbol_type yylex();
 %}
 
 %code requires {
-#include <class_declaration.hpp>
-#include <expressions.hpp>
-#include <goal.hpp>
-#include <identifier.hpp>
-#include <main_class.hpp>
-#include <method_declaration.hpp>
-#include <statements.hpp>
-#include <types.hpp>
-#include <var_declaration.hpp>
+#include <ast/class_declaration.hpp>
+#include <ast/expressions.hpp>
+#include <ast/goal.hpp>
+#include <ast/identifier.hpp>
+#include <ast/main_class.hpp>
+#include <ast/method_declaration.hpp>
+#include <ast/statements.hpp>
+#include <ast/types.hpp>
+#include <ast/var_declaration.hpp>
 }
 
 %language "c++"

@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include <ast_node.hpp>
-#include <types.hpp>
+#include <ast/ast_node.hpp>
+#include <ast/types.hpp>
 
 class VarDeclaration : public ASTNode {
 public:

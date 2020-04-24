@@ -1,5 +1,5 @@
-#include <expressions.hpp>
-#include <visitor.hpp>
+#include <ast/expressions.hpp>
+#include <visitors/visitor.hpp>
 
 AndExpression::AndExpression(ExpressionPtr lhs, ExpressionPtr rhs)
     : lhs_(std::move(lhs)), rhs_(std::move(rhs)) {

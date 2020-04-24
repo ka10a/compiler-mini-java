@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include <ast_node.hpp>
-#include <identifier.hpp>
+#include <ast/ast_node.hpp>
+#include <ast/identifier.hpp>
 
 class Expression : public ASTNode {};
 

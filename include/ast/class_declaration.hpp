@@ -3,10 +3,10 @@
 #include <memory>
 #include <vector>
 
-#include <ast_node.hpp>
-#include <identifier.hpp>
-#include <method_declaration.hpp>
-#include <var_declaration.hpp>
+#include <ast/ast_node.hpp>
+#include <ast/identifier.hpp>
+#include <ast/method_declaration.hpp>
+#include <ast/var_declaration.hpp>
 
 class ClassDeclaration : public ASTNode {
 public:

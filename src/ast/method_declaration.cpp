@@ -1,5 +1,5 @@
-#include <method_declaration.hpp>
-#include <visitor.hpp>
+#include <ast/method_declaration.hpp>
+#include <visitors/visitor.hpp>
 
 MethodDeclaration::MethodDeclaration(TypePtr return_type, IdentifierPtr name, VarDeclarations args,
                                      VarDeclarations variables, Statements statements,
