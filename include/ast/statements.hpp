@@ -15,7 +15,7 @@ using Statements = std::vector<StatementPtr>;
 class StatementList : public Statement {
 public:
     explicit StatementList(Statements statements);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     Statements statements_;
@@ -24,7 +24,7 @@ private:
 class IfElseStatement : public Statement {
 public:
     IfElseStatement(ExpressionPtr clause, StatementPtr if_body, StatementPtr else_body);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr clause_;
@@ -35,7 +35,7 @@ private:
 class WhileStatement : public Statement {
 public:
     WhileStatement(ExpressionPtr clause, StatementPtr body);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr clause_;
@@ -45,7 +45,7 @@ private:
 class PrintStatement : public Statement {
 public:
     explicit PrintStatement(ExpressionPtr value);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     ExpressionPtr value_;
@@ -54,7 +54,7 @@ private:
 class AssignmentStatement : public Statement {
 public:
     AssignmentStatement(IdentifierPtr variable, ExpressionPtr value);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     IdentifierPtr variable_;
@@ -64,7 +64,7 @@ private:
 class ArrayAssignmentStatement : public Statement {
 public:
     ArrayAssignmentStatement(IdentifierPtr variable, ExpressionPtr size, ExpressionPtr value);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     IdentifierPtr variable_;

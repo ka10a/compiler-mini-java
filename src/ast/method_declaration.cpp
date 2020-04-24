@@ -12,6 +12,6 @@ MethodDeclaration::MethodDeclaration(TypePtr return_type, IdentifierPtr name, Va
       return_expression_(std::move(return_expression)) {
 }
 
-void MethodDeclaration::Accept(const Visitor& visitor) const {
+void MethodDeclaration::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }

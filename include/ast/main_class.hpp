@@ -9,7 +9,7 @@
 class MainClass : public ASTNode {
 public:
     MainClass(IdentifierPtr class_name, IdentifierPtr args_name, StatementPtr body);
-    void Accept(const Visitor& visitor) const override;
+    void Accept(Visitor& visitor) const override;
 
 private:
     IdentifierPtr class_name_;
