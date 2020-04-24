@@ -110,9 +110,9 @@ const ExpressionPtr& LengthExpression::GetContainer() const {
 
 MethodCallExpression::MethodCallExpression(ExpressionPtr class_entity, IdentifierPtr method_name,
                                            Expressions params)
-    : class_entity_(std::move(class_entity)),
-      method_name_(std::move(method_name)),
-      params_(std::move(params)) {
+    : class_entity_(std::move(class_entity))
+    , method_name_(std::move(method_name))
+    , params_(std::move(params)) {
 }
 
 void MethodCallExpression::Accept(Visitor& visitor) const {
