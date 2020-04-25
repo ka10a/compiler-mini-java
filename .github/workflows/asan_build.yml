@@ -29,10 +29,10 @@ jobs:
     - name: Create soft link for Bison binary file and go to root
       run: sudo ln -s /usr/local/bin/bison /usr/bin/bison && cd ..
     
-    - name: Configure asan version
+    - name: Configure asan build
       run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
     
-    - name: Build release version of compiler with grammar drawing dependency
+    - name: Build compiler with address sanitizer and grammar drawing dependency
       run: cmake --build asan_build --target compiler-mini-java
       
   macos-asan:
@@ -48,8 +48,8 @@ jobs:
     - name: Install required packages
       run: brew install flex bison graphviz
           
-    - name: Configure asan version
+    - name: Configure asan build
       run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
     
-    - name: Build release version of compiler with grammar drawing dependency
+    - name: Build compiler with address sanitizer and grammar drawing dependency
       run: cmake --build asan_build --target compiler-mini-java
