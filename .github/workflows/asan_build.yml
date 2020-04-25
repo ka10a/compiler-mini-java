@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev, workflow, cmake, fix, hotfix]
+  pull_request:
+    branches: [master, dev, workflow, cmake, fix, hotfix]
+
+jobs:
+  ubuntu-asan:
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Install flex and graphviz via apt-get
+      run: sudo apt-get install flex graphviz
+      
+    - name: Download and extract bison package manually
+      run: wget http://ftp.gnu.org/gnu/bison/bison-3.5.tar.gz && tar -zxvf bison-3.5.tar.gz
+    
+    - name: Configure, compile and install bison package
+      run: cd bison-3.5/ && sudo ./configure && sudo make && sudo make install
+      
+    - name: Create soft link for Bison binary file and go to root
+      run: sudo ln -s /usr/local/bin/bison /usr/bin/bison && cd ..
+    
+    - name: Configure asan build
+      run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
+    
+    - name: Build compiler with address sanitizer and grammar drawing dependency
+      run: cmake --build asan_build --target compiler-mini-java
+      
+  macos-asan:
+    runs-on: macos-10.15
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Install required packages
+      run: brew install flex bison graphviz
+          
+    - name: Configure asan build
+      run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
+    
+    - name: Build compiler with address sanitizer and grammar drawing dependency
+      run: cmake --build asan_build --target compiler-mini-java
