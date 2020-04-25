@@ -11,5 +11,9 @@ extern GoalPtr goal;
 int main() {
     yy::parser parser;
     parser.parse();
+
+    ASTPrinter tree_printer("ast.gv");
+    goal->Accept(tree_printer);
+
     return 0;
 }

@@ -51,4 +51,7 @@ public:
 
 private:
     std::ofstream out_;
+    size_t node_number_;
+
+    void PrintEdge(size_t curr, size_t node_number);
 };
