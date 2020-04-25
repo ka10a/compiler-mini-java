@@ -10,10 +10,8 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-PATH_TO_JAVA_FILE=../samples/$1
+PATH_TO_JAVA_FILE=./samples/$1
 
-mkdir build
-cd build
-cmake ..
-make compiler-mini-java
-./compiler-mini-java < "$PATH_TO_JAVA_FILE"
+cmake . -B build
+cmake --build build --target compiler-mini-java
+./build/compiler-mini-java < "$PATH_TO_JAVA_FILE"
