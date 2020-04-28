@@ -12,9 +12,10 @@ DIGIT            [0-9]
 CHARACTER        [a-zA-Z_]
 IDENTIFIER       {CHARACTER}({CHARACTER}|{DIGIT})*
 INTEGER_LITERAL  [1-9]{DIGIT}*|0
+COMMENT          "//".*
 
 %%
-[ \t\n] { }
+[ \t\n]|{COMMENT} { }
 
 "!"  { return yy::parser::make_NOT(); }
 "&&" { return yy::parser::make_AND(); }

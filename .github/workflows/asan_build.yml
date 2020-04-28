@@ -33,7 +33,7 @@ jobs:
       run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
     
     - name: Build compiler with address sanitizer and grammar drawing dependency
-      run: cmake --build asan_build --target compiler-mini-java
+      run: cmake --build asan_build -j 2 -t compiler-mini-java
       
   macos-asan:
     runs-on: macos-10.15
@@ -52,4 +52,4 @@ jobs:
       run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
     
     - name: Build compiler with address sanitizer and grammar drawing dependency
-      run: cmake --build asan_build --target compiler-mini-java
+      run: cmake --build asan_build -j 2 -t compiler-mini-java
