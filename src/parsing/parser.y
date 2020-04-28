@@ -292,7 +292,7 @@ Expression:
     | Expression "[" Expression "]" {
         $$ = std::make_shared<ArrayExpression>(std::move($1), std::move($3));
     }
-    | Expression "." "length" {
+    | Expression "length" {
         $$ = std::make_shared<LengthExpression>(std::move($1));
     }
     | Expression "." Identifier "(" Expressions ")" {
