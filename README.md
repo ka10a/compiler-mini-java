@@ -1,9 +1,9 @@
 # MiniJava Compiler
 
-To build project, parse a file from `samples` folder and draw grammar:
+To build project and draw AST for a file from `samples` folder:
 
 ```
-./tool.sh filename.java
+./tool.sh samples/filename.java
 ```
 
-Visualized grammar will appear in `grammar.png`
+Check out your tree in `ast.png`.

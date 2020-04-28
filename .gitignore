@@ -5,3 +5,4 @@ cmake-*
 *.png
 *.jpg
 *.jpeg
+*.gv
