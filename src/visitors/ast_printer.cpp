@@ -31,8 +31,11 @@ void ASTPrinter::Visit(const Goal& goal) {
 
 void ASTPrinter::Visit(const MainClass& main_class) {
     size_t curr = node_number_;
+    out_ << curr << " [label=\"MainClass\"];\n";
+
     node_number_++;
     PrintEdge(curr, node_number_);
+    main_class.GetClassName()->Accept(*this);
 
     node_number_++;
     PrintEdge(curr, node_number_);
@@ -82,9 +85,7 @@ void ASTPrinter::Visit(const MethodDeclaration& method_declaration) {
     PrintEdge(curr, node_number_);
     method_declaration.GetName()->Accept(*this);
 
-    const auto& args = method_declaration.GetArgs();
-    size_t idx = 0;
-    for (const auto& arg : args) {
+    for (const auto& arg : method_declaration.GetArgs()) {
         node_number_++;
         PrintEdge(curr, node_number_);
 
@@ -97,11 +98,6 @@ void ASTPrinter::Visit(const MethodDeclaration& method_declaration) {
         node_number_++;
         PrintEdge(argNumber, node_number_);
         arg->GetName()->Accept(*this);
-
-        if (idx + 1 < args.size()) {
-            out_ << ", ";
-        }
-        idx++;
     }
 
     for (const auto& var : method_declaration.GetVariables()) {
@@ -176,7 +172,7 @@ void ASTPrinter::Visit(const IdentifierType& identifier_type) {
 
 void ASTPrinter::Visit(const StatementList& statement_list) {
     size_t curr = node_number_;
-    out_ << curr << "%d [label=\"StatementList\"];\n";
+    out_ << curr << "[label=\"StatementList\"];\n";
 
     for (const auto& statement : statement_list.GetStatements()) {
         node_number_++;
@@ -352,17 +348,10 @@ void ASTPrinter::Visit(const MethodCallExpression& method_call_expression) {
     PrintEdge(curr, node_number_);
     method_call_expression.GetMethodName()->Accept(*this);
 
-    const auto& params = method_call_expression.GetParams();
-    size_t idx = 0;
-    for (const auto& param : params) {
+    for (const auto& param : method_call_expression.GetParams()) {
         node_number_++;
         PrintEdge(curr, node_number_);
         param->Accept(*this);
-
-        if (idx + 1 < params.size()) {
-            out_ << ", ";
-        }
-        idx++;
     }
 }
 
