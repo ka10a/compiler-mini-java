@@ -138,7 +138,7 @@ void ASTPrinter::Visit(const VarDeclaration& var_declaration) {
     var_declaration.GetName()->Accept(*this);
 }
 
-void ASTPrinter::Visit(const IntType& int_type) {
+void ASTPrinter::Visit(const IntType& /* int_type */) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"IntType\"];\n";
 
@@ -147,7 +147,7 @@ void ASTPrinter::Visit(const IntType& int_type) {
     PrintEdge(curr, node_number_);
 }
 
-void ASTPrinter::Visit(const BoolType& bool_type) {
+void ASTPrinter::Visit(const BoolType& /* bool_type */) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"BoolType\"];\n";
 
@@ -156,7 +156,7 @@ void ASTPrinter::Visit(const BoolType& bool_type) {
     PrintEdge(curr, node_number_);
 }
 
-void ASTPrinter::Visit(const IntArrayType& int_array_type) {
+void ASTPrinter::Visit(const IntArrayType& /* int_array_type */) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"IntArrayType\"];\n";
 
@@ -394,7 +394,7 @@ void ASTPrinter::Visit(const IdentifierExpression& identifier_expression) {
     identifier_expression.GetVariableName()->Accept(*this);
 }
 
-void ASTPrinter::Visit(const ThisExpression& this_expression) {
+void ASTPrinter::Visit(const ThisExpression& /* this_expression */) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"ThisExpression\"];\n";
 
