@@ -79,6 +79,9 @@ extern yy::parser::symbol_type yylex();
 %token PRINT "System.out.println"
 %token LENGTH "length"
 
+%left LENGTH
+
+
 %token <std::string> IDENTIFIER
 %token <int> INTEGER_LITERAL
 %token END 0
