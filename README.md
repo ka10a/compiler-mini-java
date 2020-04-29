@@ -14,3 +14,5 @@ To run tests, go to your build folder and then:
 cd samples
 ctest
 ```
+
+Graphs and images will be saved into `samples/valid` folder.
