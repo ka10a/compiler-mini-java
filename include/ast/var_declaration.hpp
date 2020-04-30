@@ -1,7 +1,7 @@
 #pragma once
 
+#include <deque>
 #include <memory>
-#include <vector>
 
 #include <ast/ast_node.hpp>
 #include <ast/types.hpp>
@@ -19,4 +19,4 @@ private:
 };
 
 using VarDeclarationPtr = std::shared_ptr<VarDeclaration>;
-using VarDeclarations = std::vector<VarDeclarationPtr>;
+using VarDeclarations = std::deque<VarDeclarationPtr>;

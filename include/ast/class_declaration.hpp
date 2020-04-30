@@ -1,7 +1,7 @@
 #pragma once
 
+#include <deque>
 #include <memory>
-#include <vector>
 
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
@@ -26,4 +26,4 @@ private:
 };
 
 using ClassDeclarationPtr = std::shared_ptr<ClassDeclaration>;
-using ClassDeclarations = std::vector<ClassDeclarationPtr>;
+using ClassDeclarations = std::deque<ClassDeclarationPtr>;

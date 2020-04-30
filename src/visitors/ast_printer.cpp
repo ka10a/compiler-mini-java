@@ -39,10 +39,6 @@ void ASTPrinter::Visit(const MainClass& main_class) {
 
     node_number_++;
     PrintEdge(curr, node_number_);
-    main_class.GetArgsName()->Accept(*this);
-
-    node_number_++;
-    PrintEdge(curr, node_number_);
     main_class.GetBody()->Accept(*this);
 }
 
@@ -184,6 +180,7 @@ void ASTPrinter::Visit(const StatementList& statement_list) {
 void ASTPrinter::Visit(const IfElseStatement& if_else_statement) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"IfElseStatement\"];\n";
+
     node_number_++;
     PrintEdge(curr, node_number_);
     if_else_statement.GetClause()->Accept(*this);
@@ -417,15 +414,6 @@ void ASTPrinter::Visit(const NotExpression& not_expression) {
     node_number_++;
     PrintEdge(curr, node_number_);
     not_expression.GetExpression()->Accept(*this);
-}
-
-void ASTPrinter::Visit(const BetweenBracketsExpression& between_brackets_expression) {
-    size_t curr = node_number_;
-    out_ << curr << " [label=\"BetweenBracketsExpression\"];\n";
-
-    node_number_++;
-    PrintEdge(curr, node_number_);
-    between_brackets_expression.GetExpression()->Accept(*this);
 }
 
 void ASTPrinter::Visit(const Identifier& identifier) {

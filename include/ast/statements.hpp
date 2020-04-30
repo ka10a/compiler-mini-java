@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <deque>
 #include <memory>
 
 #include <ast/ast_node.hpp>
@@ -10,7 +10,7 @@
 class Statement : public ASTNode {};
 
 using StatementPtr = std::shared_ptr<Statement>;
-using Statements = std::vector<StatementPtr>;
+using Statements = std::deque<StatementPtr>;
 
 class StatementList : public Statement {
 public:

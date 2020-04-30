@@ -1,7 +1,7 @@
 #pragma once
 
+#include <deque>
 #include <memory>
-#include <vector>
 
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
@@ -32,4 +32,4 @@ private:
 };
 
 using MethodDeclarationPtr = std::shared_ptr<MethodDeclaration>;
-using MethodDeclarations = std::vector<MethodDeclarationPtr>;
+using MethodDeclarations = std::deque<MethodDeclarationPtr>;

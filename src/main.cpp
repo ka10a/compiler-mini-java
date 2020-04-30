@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     }
 
     try {
-        ASTPrinter tree_printer(graph_filename + ".gv");
+        ASTPrinter tree_printer(graph_filename);
         goal->Accept(tree_printer);
     } catch (...) {
         std::cerr << "Exception happened while drawing a tree\n";
