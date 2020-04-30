@@ -201,15 +201,3 @@ void NotExpression::Accept(Visitor& visitor) const {
 const ExpressionPtr& NotExpression::GetExpression() const {
     return expression_;
 }
-
-BetweenBracketsExpression::BetweenBracketsExpression(ExpressionPtr expression)
-    : expression_(std ::move(expression)) {
-}
-
-void BetweenBracketsExpression::Accept(Visitor& visitor) const {
-    visitor.Visit(*this);
-}
-
-const ExpressionPtr& BetweenBracketsExpression::GetExpression() const {
-    return expression_;
-}

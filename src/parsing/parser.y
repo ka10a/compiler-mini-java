@@ -116,7 +116,6 @@ MainClass:
     "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}" {
         $$ = std::make_shared<MainClass>(
             std::move($2),
-            std::move($12),
             std::move($15)
         );
     }
@@ -235,8 +234,7 @@ Statements:
         $$ = Statements();
     }
     | Statement Statements {
-        // TODO: Order of statements is reversed, change vector to deque and make push_front.
-        $2.push_back(std::move($1));
+        $2.push_front(std::move($1));
         $$ = std::move($2);
     }
 ;
@@ -330,7 +328,7 @@ Expression:
         $$ = std::make_shared<NotExpression>(std::move($2));
     }
     | "(" Expression ")" {
-        $$ = std::make_shared<BetweenBracketsExpression>(std::move($2));
+        $$ = std::move($2);
     }
 ;
 

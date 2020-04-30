@@ -1,7 +1,7 @@
 #pragma once
 
+#include <deque>
 #include <memory>
-#include <vector>
 
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
@@ -9,7 +9,7 @@
 class Expression : public ASTNode {};
 
 using ExpressionPtr = std::shared_ptr<Expression>;
-using Expressions = std::vector<ExpressionPtr>;
+using Expressions = std::deque<ExpressionPtr>;
 
 class AndExpression : public Expression {
 public:
@@ -166,16 +166,6 @@ private:
 class NotExpression : public Expression {
 public:
     explicit NotExpression(ExpressionPtr expression);
-    void Accept(Visitor& visitor) const override;
-    const ExpressionPtr& GetExpression() const;
-
-private:
-    ExpressionPtr expression_;
-};
-
-class BetweenBracketsExpression : public Expression {
-public:
-    explicit BetweenBracketsExpression(ExpressionPtr expression);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetExpression() const;
 

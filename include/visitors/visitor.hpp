@@ -49,7 +49,6 @@ public:
     virtual void Visit(const NewExpression&) = 0;
 
     virtual void Visit(const NotExpression&) = 0;
-    virtual void Visit(const BetweenBracketsExpression&) = 0;
 
     virtual void Visit(const Identifier&) = 0;
 };

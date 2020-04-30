@@ -45,7 +45,6 @@ public:
     void Visit(const NewExpression& new_expression) override;
 
     void Visit(const NotExpression& not_expression) override;
-    void Visit(const BetweenBracketsExpression& between_brackets_expression) override;
 
     void Visit(const Identifier& identifier) override;
 
