@@ -7,7 +7,9 @@
 
 GoalPtr goal;
 extern yy::parser::symbol_type yylex();
-
+void yy::parser::error(const std::string& msg) {
+    throw std::runtime_error(msg);
+}
 %}
 
 %code requires {

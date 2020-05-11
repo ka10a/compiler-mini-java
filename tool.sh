@@ -18,5 +18,5 @@ fi
 PATH_TO_JAVA_FILE=./$1
 PATH_TO_GRAPH_FILE=./$2
 
-./build/compiler-mini-java "$PATH_TO_JAVA_FILE" "$PATH_TO_GRAPH_FILE".gv
+./build/compiler-mini-java "$PATH_TO_JAVA_FILE" "$PATH_TO_GRAPH_FILE".gv || exit 1
 dot -Tpng "$PATH_TO_GRAPH_FILE".gv -o "$PATH_TO_GRAPH_FILE".png
