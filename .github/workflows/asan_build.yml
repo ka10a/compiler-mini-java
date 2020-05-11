@@ -17,26 +17,28 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install flex and graphviz via apt-get
-      run: sudo apt-get install flex graphviz
-
-    - name: Download and extract bison package manually
-      run: wget http://ftp.gnu.org/gnu/bison/bison-3.5.tar.gz && tar -zxvf bison-3.5.tar.gz
-
-    - name: Configure, compile and install bison package
-      run: cd bison-3.5/ && sudo ./configure && sudo make && sudo make install
-
-    - name: Create soft link for Bison binary file and go to root
-      run: sudo ln -s /usr/local/bin/bison /usr/bin/bison && cd ..
+    - name: Install required packages
+      run: |
+        sudo apt-get install flex graphviz
+        wget http://ftp.gnu.org/gnu/bison/bison-3.5.tar.gz
+        tar -zxvf bison-3.5.tar.gz
+        cd bison-3.5/
+        sudo ./configure
+        sudo make
+        sudo make install
+        sudo ln -s /usr/local/bin/bison /usr/bin/bison
+        cd ..
 
     - name: Configure asan build
       run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
 
-    - name: Build compiler with address sanitizer and grammar drawing dependency
+    - name: Build with address sanitizer
       run: cmake --build asan_build -j 2 -t compiler-mini-java
 
     - name: Run tests
-      run: cd asan_build/samples && ctest
+      run: |
+        cd asan_build/samples
+        ctest
 
   macos-asan:
     runs-on: macos-10.15
@@ -54,8 +56,10 @@ jobs:
     - name: Configure asan build
       run: cmake . -B asan_build -DCMAKE_BUILD_TYPE=ASAN
 
-    - name: Build compiler with address sanitizer and grammar drawing dependency
+    - name: Build with address sanitizer
       run: cmake --build asan_build -j 2 -t compiler-mini-java
 
     - name: Run tests
-      run: cd asan_build/samples && ctest
+      run: |
+        cd asan_build/samples
+        ctest

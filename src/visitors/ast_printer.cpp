@@ -85,14 +85,14 @@ void ASTPrinter::Visit(const MethodDeclaration& method_declaration) {
         node_number_++;
         PrintEdge(curr, node_number_);
 
-        size_t argNumber = node_number_;
-        out_ << argNumber << " [label=\"Argument\"];\n";
+        size_t arg_number = node_number_;
+        out_ << arg_number << " [label=\"Argument\"];\n";
         node_number_++;
-        PrintEdge(argNumber, node_number_);
+        PrintEdge(arg_number, node_number_);
         arg->GetType()->Accept(*this);
 
         node_number_++;
-        PrintEdge(argNumber, node_number_);
+        PrintEdge(arg_number, node_number_);
         arg->GetName()->Accept(*this);
     }
 

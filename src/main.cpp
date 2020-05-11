@@ -5,10 +5,6 @@
 #include <ast/goal.hpp>
 #include <visitors/ast_printer.hpp>
 
-void yy::parser::error(const std::string& msg) {
-    std::cout << "An error occured: " << msg << '\n';
-}
-
 extern FILE* yyin;
 extern GoalPtr goal;
 
