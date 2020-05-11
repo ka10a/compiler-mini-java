@@ -20,4 +20,4 @@ cd build/samples
 ctest
 ```
 
-Graphs and images will be saved into `samples/valid/pics` folder.
+Graphs and images will be saved into the same folder.
