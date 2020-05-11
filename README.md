@@ -1,17 +1,22 @@
 # MiniJava Compiler
 
-To build project and draw an AST for a file:
+To build:
 
 ```
-./tool.sh path/to/file.java path/to/graph
+./build.sh
 ```
 
-Check out your tree in `path/to/graph.png`.
+To draw an AST for a file:
+```
+./tool.sh path/to/file.java graphname 
+```
 
-To run tests, go to your build folder and then:
+Check out results in `graphname.gv` and `graphname.png`.
+
+To run tests:
 
 ```
-cd samples
+cd build/samples
 ctest
 ```
 
