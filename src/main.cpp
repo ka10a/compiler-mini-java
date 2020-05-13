@@ -7,6 +7,7 @@
 
 extern FILE* yyin;
 extern GoalPtr goal;
+extern yy::location loc;
 
 int main(int argc, char* argv[]) {
     if (argc == 1) {
@@ -18,29 +19,39 @@ int main(int argc, char* argv[]) {
     if (argc > 3) {
         throw std::logic_error("Only two arguments are allowed");
     }
-    const std::string java_filename = argv[1];
+
+    // Not const because of yy::location::initialize needs non-const pointer.
+    std::string java_filename = argv[1];
     const std::string graph_filename = argv[2];
 
     FILE* const java_file = fopen(java_filename.c_str(), "r");
     if (!java_file) {
         throw std::runtime_error("File " + java_filename + " does not exist");
     }
+
     yyin = java_file;
+    loc.initialize(&java_filename);
 
     try {
         yy::parser parser;
         parser.parse();
+    } catch (const yy::parser::syntax_error& error) {
+        std::cerr << "Exception while parsing " << error.location << ": " << error.what() << '\n';
+        fclose(java_file);
+        throw;
     } catch (...) {
-        std::cerr << "Exception happened while parsing\n";
+        std::cerr << "Unknown exception while parsing\n";
         fclose(java_file);
         throw;
     }
+
+    fclose(java_file);
 
     try {
         ASTPrinter tree_printer(graph_filename);
         goal->Accept(tree_printer);
     } catch (...) {
-        std::cerr << "Exception happened while drawing a tree\n";
+        std::cerr << "Exception while drawing a tree\n";
         fclose(java_file);
         throw;
     }

@@ -5,11 +5,12 @@
 
 #include <parser.hpp>
 
-GoalPtr goal;
 extern yy::parser::symbol_type yylex();
-void yy::parser::error(const std::string& msg) {
-    throw std::runtime_error(msg);
+void yy::parser::error(const location_type& loc, const std::string& msg) {
+    throw yy::parser::syntax_error(loc, msg);
 }
+
+GoalPtr goal;
 %}
 
 %code requires {
@@ -27,6 +28,7 @@ void yy::parser::error(const std::string& msg) {
 %language "c++"
 %define api.value.type variant
 %define api.token.constructor
+%locations
 
 %token NOT "!"
 %token AND "&&"
