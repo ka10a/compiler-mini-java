@@ -1,8 +1,10 @@
 #include <ast/main_class.hpp>
 #include <visitors/visitor.hpp>
 
-MainClass::MainClass(IdentifierPtr class_name, StatementPtr body)
-    : class_name_(std::move(class_name)), body_(std::move(body)) {
+MainClass::MainClass(int first_line, int first_column, IdentifierPtr class_name, StatementPtr body)
+    : ASTNode(first_line, first_column)
+    , class_name_(std::move(class_name))
+    , body_(std::move(body)) {
 }
 
 void MainClass::Accept(Visitor& visitor) const {

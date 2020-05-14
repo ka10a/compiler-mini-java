@@ -5,31 +5,34 @@
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
 
-class Type : public ASTNode {};
+class Type : public ASTNode {
+public:
+    Type(int first_line, int first_column);
+};
 
 using TypePtr = std::shared_ptr<Type>;
 
 class IntType : public Type {
 public:
-    IntType() = default;
+    IntType(int first_line, int first_column);
     void Accept(Visitor& visitor) const override;
 };
 
 class BoolType : public Type {
 public:
-    BoolType() = default;
+    BoolType(int first_line, int first_column);
     void Accept(Visitor& visitor) const override;
 };
 
 class IntArrayType : public Type {
 public:
-    IntArrayType() = default;
+    IntArrayType(int first_line, int first_column);
     void Accept(Visitor& visitor) const override;
 };
 
 class IdentifierType : public Type {
 public:
-    explicit IdentifierType(IdentifierPtr class_name);
+    IdentifierType(int first_line, int first_column, IdentifierPtr class_name);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetClassName() const;
 

@@ -11,6 +11,7 @@ void yy::parser::error(const location_type& loc, const std::string& msg) {
 }
 
 GoalPtr goal;
+extern yy::location loc;
 %}
 
 %code requires {
@@ -112,13 +113,15 @@ GoalPtr goal;
 %%
 Goal:
     MainClass ClassDeclarations {
-        goal = std::make_shared<Goal>(std::move($1), std::move($2));
+        goal = std::make_shared<Goal>(loc.begin.line, loc.begin.column, std::move($1), std::move($2));
     }
 ;
 
 MainClass:
     "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}" {
         $$ = std::make_shared<MainClass>(
+            loc.begin.line,
+            loc.begin.column,
             std::move($2),
             std::move($15)
         );
@@ -138,6 +141,8 @@ ClassDeclarations:
 ClassDeclaration:
     "class" Identifier Extends "{" VarDeclarations MethodDeclarations "}" {
         $$ = std::make_shared<ClassDeclaration>(
+            loc.begin.line,
+            loc.begin.column,
             std::move($2),
             std::move($3),
             std::move($5),
@@ -167,7 +172,7 @@ VarDeclarations:
 
 VarDeclaration:
     Type Identifier ";" {
-        $$ = std::make_shared<VarDeclaration>(std::move($1), std::move($2));
+        $$ = std::make_shared<VarDeclaration>(loc.begin.line, loc.begin.column, std::move($1), std::move($2));
     }
 ;
 
@@ -184,6 +189,8 @@ MethodDeclarations:
 MethodDeclaration:
     "public" Type Identifier "(" MethodArgs ")" "{" VarDeclarations Statements "return" Expression ";" "}" {
         $$ = std::make_shared<MethodDeclaration>(
+            loc.begin.line,
+            loc.begin.column,
             std::move($2),
             std::move($3),
             std::move($5),
@@ -202,6 +209,8 @@ MethodArgs:
         $$ = VarDeclarations();
         $$.push_back(
             std::make_shared<VarDeclaration>(
+                loc.begin.line,
+                loc.begin.column,
                 std::move($1),
                 std::move($2)
             )
@@ -210,6 +219,8 @@ MethodArgs:
     | MethodArgs "," Type Identifier {
         $1.push_back(
             std::make_shared<VarDeclaration>(
+                loc.begin.line,
+                loc.begin.column,
                 std::move($3),
                 std::move($4)
             )
@@ -220,16 +231,16 @@ MethodArgs:
 
 Type:
     "int" "[" "]" {
-        $$ = std::make_shared<IntArrayType>();
+        $$ = std::make_shared<IntArrayType>(loc.begin.line, loc.begin.column);
     }
     | "int" {
-        $$ = std::make_shared<IntType>();
+        $$ = std::make_shared<IntType>(loc.begin.line, loc.begin.column);
     }
     | "boolean" {
-        $$ = std::make_shared<BoolType>();
+        $$ = std::make_shared<BoolType>(loc.begin.line, loc.begin.column);
     }
     | Identifier {
-        $$ = std::make_shared<IdentifierType>(std::move($1));
+        $$ = std::make_shared<IdentifierType>(loc.begin.line, loc.begin.column, std::move($1));
     }
 ;
 
@@ -245,10 +256,12 @@ Statements:
 
 Statement:
     "{" Statements "}" {
-        $$ = std::make_shared<StatementList>(std::move($2));
+        $$ = std::make_shared<StatementList>(loc.begin.line, loc.begin.column, std::move($2));
     }
     | "if" "(" Expression ")" Statement "else" Statement {
         $$ = std::make_shared<IfElseStatement>(
+            loc.begin.line,
+            loc.begin.column,
             std::move($3),
             std::move($5),
             std::move($7)
@@ -256,21 +269,27 @@ Statement:
     }
     | "while" "(" Expression ")" Statement {
         $$ = std::make_shared<WhileStatement>(
+            loc.begin.line,
+            loc.begin.column,
             std::move($3),
             std::move($5)
         );
     }
     | "System.out.println" "(" Expression ")" ";" {
-        $$ = std::make_shared<PrintStatement>(std::move($3));
+        $$ = std::make_shared<PrintStatement>(loc.begin.line, loc.begin.column, std::move($3));
     }
     | Identifier "=" Expression ";" {
         $$ = std::make_shared<AssignmentStatement>(
+       	    loc.begin.line,
+    	    loc.begin.column,
             std::move($1),
             std::move($3)
         );
     }
     | Identifier "[" Expression "]" "=" Expression ";" {
         $$ = std::make_shared<ArrayAssignmentStatement>(
+            loc.begin.line,
+            loc.begin.column,
             std::move($1),
             std::move($3),
             std::move($6)
@@ -280,56 +299,58 @@ Statement:
 
 Expression:
     Expression "&&" Expression {
-        $$ = std::make_shared<AndExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<AndExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "<" Expression {
-        $$ = std::make_shared<LessExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<LessExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "+" Expression {
-        $$ = std::make_shared<AddExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<AddExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "-" Expression {
-        $$ = std::make_shared<SubtractExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<SubtractExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "*" Expression {
-        $$ = std::make_shared<MultiplicateExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<MultiplicateExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "[" Expression "]" {
-        $$ = std::make_shared<ArrayExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<ArrayExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "length" {
-        $$ = std::make_shared<LengthExpression>(std::move($1));
+        $$ = std::make_shared<LengthExpression>(loc.begin.line, loc.begin.column, std::move($1));
     }
     | Expression "." Identifier "(" Expressions ")" {
         $$ = std::make_shared<MethodCallExpression>(
+            loc.begin.line,
+            loc.begin.column,
             std::move($1),
             std::move($3),
             std::move($5)
         );
     }
     | INTEGER_LITERAL {
-        $$ = std::make_shared<IntExpression>($1);
+        $$ = std::make_shared<IntExpression>(loc.begin.line, loc.begin.column, $1);
     }
     | "true" {
-        $$ = std::make_shared<BoolExpression>(true);
+        $$ = std::make_shared<BoolExpression>(loc.begin.line, loc.begin.column, true);
     }
     | "false" {
-        $$ = std::make_shared<BoolExpression>(false);
+        $$ = std::make_shared<BoolExpression>(loc.begin.line, loc.begin.column, false);
     }
     | Identifier {
-        $$ = std::make_shared<IdentifierExpression>(std::move($1));
+        $$ = std::make_shared<IdentifierExpression>(loc.begin.line, loc.begin.column, std::move($1));
     }
     | "this" {
-        $$ = std::make_shared<ThisExpression>();
+        $$ = std::make_shared<ThisExpression>(loc.begin.line, loc.begin.column);
     }
     | "new" "int" "[" Expression "]" {
-        $$ = std::make_shared<NewIntArrayExpression>(std::move($4));
+        $$ = std::make_shared<NewIntArrayExpression>(loc.begin.line, loc.begin.column, std::move($4));
     }
     | "new" Identifier "(" ")" {
-        $$ = std::make_shared<NewExpression>(std::move($2));
+        $$ = std::make_shared<NewExpression>(loc.begin.line, loc.begin.column, std::move($2));
     }
     | "!" Expression {
-        $$ = std::make_shared<NotExpression>(std::move($2));
+        $$ = std::make_shared<NotExpression>(loc.begin.line, loc.begin.column, std::move($2));
     }
     | "(" Expression ")" {
         $$ = std::move($2);
@@ -352,7 +373,7 @@ Expressions:
 
 Identifier:
     IDENTIFIER {
-        $$ = std::make_shared<Identifier>(std::move($1));
+        $$ = std::make_shared<Identifier>(loc.begin.line, loc.begin.column, std::move($1));
     }
 ;
 %%

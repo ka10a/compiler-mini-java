@@ -6,14 +6,17 @@
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
 
-class Expression : public ASTNode {};
+class Expression : public ASTNode {
+public:
+    Expression(int first_line, int first_column);
+};
 
 using ExpressionPtr = std::shared_ptr<Expression>;
 using Expressions = std::deque<ExpressionPtr>;
 
 class AndExpression : public Expression {
 public:
-    AndExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    AndExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -25,7 +28,7 @@ private:
 
 class LessExpression : public Expression {
 public:
-    LessExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    LessExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -37,7 +40,7 @@ private:
 
 class AddExpression : public Expression {
 public:
-    AddExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    AddExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -49,7 +52,7 @@ private:
 
 class SubtractExpression : public Expression {
 public:
-    SubtractExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    SubtractExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -61,7 +64,7 @@ private:
 
 class MultiplicateExpression : public Expression {
 public:
-    MultiplicateExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    MultiplicateExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -73,7 +76,7 @@ private:
 
 class ArrayExpression : public Expression {
 public:
-    ArrayExpression(ExpressionPtr array, ExpressionPtr idx);
+    ArrayExpression(int first_line, int first_column, ExpressionPtr array, ExpressionPtr idx);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetArray() const;
     const ExpressionPtr& GetIdx() const;
@@ -85,7 +88,7 @@ private:
 
 class LengthExpression : public Expression {
 public:
-    explicit LengthExpression(ExpressionPtr container);
+    LengthExpression(int first_line, int first_column, ExpressionPtr container);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetContainer() const;
 
@@ -95,7 +98,8 @@ private:
 
 class MethodCallExpression : public Expression {
 public:
-    MethodCallExpression(ExpressionPtr class_entity, IdentifierPtr method_name, Expressions params);
+    MethodCallExpression(int first_line, int first_column, ExpressionPtr class_entity,
+                         IdentifierPtr method_name, Expressions params);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetClassEntity() const;
     const IdentifierPtr& GetMethodName() const;
@@ -109,7 +113,7 @@ private:
 
 class IntExpression : public Expression {
 public:
-    explicit IntExpression(int value);
+    IntExpression(int first_line, int first_column, int value);
     void Accept(Visitor& visitor) const override;
     int GetValue() const;
 
@@ -119,7 +123,7 @@ private:
 
 class BoolExpression : public Expression {
 public:
-    explicit BoolExpression(bool value);
+    BoolExpression(int first_line, int first_column, bool value);
     void Accept(Visitor& visitor) const override;
     bool IsValue() const;
 
@@ -129,7 +133,7 @@ private:
 
 class IdentifierExpression : public Expression {
 public:
-    explicit IdentifierExpression(IdentifierPtr variable_name);
+    IdentifierExpression(int first_line, int first_column, IdentifierPtr variable_name);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetVariableName() const;
 
@@ -139,13 +143,13 @@ private:
 
 class ThisExpression : public Expression {
 public:
-    ThisExpression() = default;
+    ThisExpression(int first_line, int first_column);
     void Accept(Visitor& visitor) const override;
 };
 
 class NewIntArrayExpression : public Expression {
 public:
-    explicit NewIntArrayExpression(ExpressionPtr size);
+    NewIntArrayExpression(int first_line, int first_column, ExpressionPtr size);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetSize() const;
 
@@ -155,7 +159,7 @@ private:
 
 class NewExpression : public Expression {
 public:
-    explicit NewExpression(IdentifierPtr class_name);
+    NewExpression(int first_line, int first_column, IdentifierPtr class_name);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetClassName() const;
 
@@ -165,7 +169,7 @@ private:
 
 class NotExpression : public Expression {
 public:
-    explicit NotExpression(ExpressionPtr expression);
+    NotExpression(int first_line, int first_column, ExpressionPtr expression);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetExpression() const;
 

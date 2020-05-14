@@ -11,8 +11,8 @@
 
 class MethodDeclaration : public ASTNode {
 public:
-    MethodDeclaration(TypePtr return_type, IdentifierPtr name, VarDeclarations args,
-                      VarDeclarations variables, Statements statements,
+    MethodDeclaration(int first_line, int first_column, TypePtr return_type, IdentifierPtr name,
+                      VarDeclarations args, VarDeclarations variables, Statements statements,
                       ExpressionPtr return_expression);
     void Accept(Visitor& visitor) const override;
     const TypePtr& GetReturnType() const;

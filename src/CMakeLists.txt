@@ -21,6 +21,7 @@ add_executable(
     main.cpp
     ${BISON_parser_OUTPUTS}
     ${FLEX_scanner_OUTPUTS}
+    ast/ast_node.cpp
     ast/class_declaration.cpp
     ast/expressions.cpp
     ast/goal.cpp
