@@ -1,11 +1,11 @@
 #include <ast/expressions.hpp>
 #include <visitors/visitor.hpp>
 
-Expression::Expression(int first_line, int first_column) : ASTNode(first_line, first_column) {
+Expression::Expression(LocationPtr location) : ASTNode(std::move(location)) {
 }
 
-AndExpression::AndExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs)
-    : Expression(first_line, first_column), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
+AndExpression::AndExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs)
+    : Expression(std::move(location)), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
 void AndExpression::Accept(Visitor& visitor) const {
@@ -20,9 +20,8 @@ const ExpressionPtr& AndExpression::GetRhs() const {
     return rhs_;
 }
 
-LessExpression::LessExpression(int first_line, int first_column, ExpressionPtr lhs,
-                               ExpressionPtr rhs)
-    : Expression(first_line, first_column), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
+LessExpression::LessExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs)
+    : Expression(std::move(location)), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
 void LessExpression::Accept(Visitor& visitor) const {
@@ -37,8 +36,8 @@ const ExpressionPtr& LessExpression::GetRhs() const {
     return rhs_;
 }
 
-AddExpression::AddExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs)
-    : Expression(first_line, first_column), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
+AddExpression::AddExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs)
+    : Expression(std::move(location)), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
 void AddExpression::Accept(Visitor& visitor) const {
@@ -53,9 +52,8 @@ const ExpressionPtr& AddExpression::GetRhs() const {
     return rhs_;
 }
 
-SubtractExpression::SubtractExpression(int first_line, int first_column, ExpressionPtr lhs,
-                                       ExpressionPtr rhs)
-    : Expression(first_line, first_column), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
+SubtractExpression::SubtractExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs)
+    : Expression(std::move(location)), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
 void SubtractExpression::Accept(Visitor& visitor) const {
@@ -70,9 +68,8 @@ const ExpressionPtr& SubtractExpression::GetRhs() const {
     return rhs_;
 }
 
-MultiplyExpression::MultiplyExpression(int first_line, int first_column, ExpressionPtr lhs,
-                                       ExpressionPtr rhs)
-    : Expression(first_line, first_column), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
+MultiplyExpression::MultiplyExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs)
+    : Expression(std::move(location)), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
 void MultiplyExpression::Accept(Visitor& visitor) const {
@@ -87,9 +84,8 @@ const ExpressionPtr& MultiplyExpression::GetRhs() const {
     return rhs_;
 }
 
-ArrayExpression::ArrayExpression(int first_line, int first_column, ExpressionPtr array,
-                                 ExpressionPtr idx)
-    : Expression(first_line, first_column), array_(std::move(array)), idx_(std::move(idx)) {
+ArrayExpression::ArrayExpression(LocationPtr location, ExpressionPtr array, ExpressionPtr idx)
+    : Expression(std::move(location)), array_(std::move(array)), idx_(std::move(idx)) {
 }
 
 void ArrayExpression::Accept(Visitor& visitor) const {
@@ -104,8 +100,8 @@ const ExpressionPtr& ArrayExpression::GetIdx() const {
     return idx_;
 }
 
-LengthExpression::LengthExpression(int first_line, int first_column, ExpressionPtr container)
-    : Expression(first_line, first_column), container_(std::move(container)) {
+LengthExpression::LengthExpression(LocationPtr location, ExpressionPtr container)
+    : Expression(std::move(location)), container_(std::move(container)) {
 }
 
 void LengthExpression::Accept(Visitor& visitor) const {
@@ -116,10 +112,9 @@ const ExpressionPtr& LengthExpression::GetContainer() const {
     return container_;
 }
 
-MethodCallExpression::MethodCallExpression(int first_line, int first_column,
-                                           ExpressionPtr class_entity, IdentifierPtr method_name,
-                                           Expressions params)
-    : Expression(first_line, first_column)
+MethodCallExpression::MethodCallExpression(LocationPtr location, ExpressionPtr class_entity,
+                                           IdentifierPtr method_name, Expressions params)
+    : Expression(std::move(location))
     , class_entity_(std::move(class_entity))
     , method_name_(std::move(method_name))
     , params_(std::move(params)) {
@@ -141,8 +136,8 @@ const Expressions& MethodCallExpression::GetParams() const {
     return params_;
 }
 
-IntExpression::IntExpression(int first_line, int first_column, int value)
-    : Expression(first_line, first_column), value_(value) {
+IntExpression::IntExpression(LocationPtr location, int value)
+    : Expression(std::move(location)), value_(value) {
 }
 
 void IntExpression::Accept(Visitor& visitor) const {
@@ -153,8 +148,8 @@ int IntExpression::GetValue() const {
     return value_;
 }
 
-BoolExpression::BoolExpression(int first_line, int first_column, bool value)
-    : Expression(first_line, first_column), value_(value) {
+BoolExpression::BoolExpression(LocationPtr location, bool value)
+    : Expression(std::move(location)), value_(value) {
 }
 
 void BoolExpression::Accept(Visitor& visitor) const {
@@ -165,9 +160,8 @@ bool BoolExpression::IsValue() const {
     return value_;
 }
 
-IdentifierExpression::IdentifierExpression(int first_line, int first_column,
-                                           IdentifierPtr variable_name)
-    : Expression(first_line, first_column), variable_name_(std::move(variable_name)) {
+IdentifierExpression::IdentifierExpression(LocationPtr location, IdentifierPtr variable_name)
+    : Expression(std::move(location)), variable_name_(std::move(variable_name)) {
 }
 
 void IdentifierExpression::Accept(Visitor& visitor) const {
@@ -178,16 +172,15 @@ const IdentifierPtr& IdentifierExpression::GetVariableName() const {
     return variable_name_;
 }
 
-ThisExpression::ThisExpression(int first_line, int first_column)
-    : Expression(first_line, first_column) {
+ThisExpression::ThisExpression(LocationPtr location) : Expression(std::move(location)) {
 }
 
 void ThisExpression::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
 
-NewIntArrayExpression::NewIntArrayExpression(int first_line, int first_column, ExpressionPtr size)
-    : Expression(first_line, first_column), size_(std::move(size)) {
+NewIntArrayExpression::NewIntArrayExpression(LocationPtr location, ExpressionPtr size)
+    : Expression(std::move(location)), size_(std::move(size)) {
 }
 
 void NewIntArrayExpression::Accept(Visitor& visitor) const {
@@ -198,8 +191,8 @@ const ExpressionPtr& NewIntArrayExpression::GetSize() const {
     return size_;
 }
 
-NewExpression::NewExpression(int first_line, int first_column, IdentifierPtr class_name)
-    : Expression(first_line, first_column), class_name_(std::move(class_name)) {
+NewExpression::NewExpression(LocationPtr location, IdentifierPtr class_name)
+    : Expression(std::move(location)), class_name_(std::move(class_name)) {
 }
 
 void NewExpression::Accept(Visitor& visitor) const {
@@ -210,8 +203,8 @@ const IdentifierPtr& NewExpression::GetClassName() const {
     return class_name_;
 }
 
-NotExpression::NotExpression(int first_line, int first_column, ExpressionPtr expression)
-    : Expression(first_line, first_column), expression_(std::move(expression)) {
+NotExpression::NotExpression(LocationPtr location, ExpressionPtr expression)
+    : Expression(std::move(location)), expression_(std::move(expression)) {
 }
 
 void NotExpression::Accept(Visitor& visitor) const {

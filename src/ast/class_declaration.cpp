@@ -1,10 +1,10 @@
 #include <ast/class_declaration.hpp>
 #include <visitors/visitor.hpp>
 
-ClassDeclaration::ClassDeclaration(int first_line, int first_column, IdentifierPtr class_name,
+ClassDeclaration::ClassDeclaration(LocationPtr location, IdentifierPtr class_name,
                                    IdentifierPtr extends_class_name, VarDeclarations variables,
                                    MethodDeclarations methods)
-    : ASTNode(first_line, first_column)
+    : ASTNode(std::move(location))
     , class_name_(std::move(class_name))
     , extends_class_name_(std::move(extends_class_name))
     , variables_(std::move(variables))

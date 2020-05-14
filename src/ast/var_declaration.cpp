@@ -1,9 +1,8 @@
 #include <ast/var_declaration.hpp>
 #include <visitors/visitor.hpp>
 
-VarDeclaration::VarDeclaration(int first_line, int first_column, TypePtr type,
-                               IdentifierPtr var_name)
-    : ASTNode(first_line, first_column), type_(std::move(type)), var_name_(std::move(var_name)) {
+VarDeclaration::VarDeclaration(LocationPtr location, TypePtr type, IdentifierPtr var_name)
+    : ASTNode(std::move(location)), type_(std::move(type)), var_name_(std::move(var_name)) {
 }
 
 void VarDeclaration::Accept(Visitor& visitor) const {

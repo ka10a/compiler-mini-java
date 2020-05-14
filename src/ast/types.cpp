@@ -1,32 +1,32 @@
 #include <ast/types.hpp>
 #include <visitors/visitor.hpp>
 
-Type::Type(int first_line, int first_column) : ASTNode(first_line, first_column) {
+Type::Type(LocationPtr location) : ASTNode(std::move(location)) {
 }
 
-IntType::IntType(int first_line, int first_column) : Type(first_line, first_column) {
+IntType::IntType(LocationPtr location) : Type(std::move(location)) {
 }
 
 void IntType::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
 
-BoolType::BoolType(int first_line, int first_column) : Type(first_line, first_column) {
+BoolType::BoolType(LocationPtr location) : Type(std::move(location)) {
 }
 
 void BoolType::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
 
-IntArrayType::IntArrayType(int first_line, int first_column) : Type(first_line, first_column) {
+IntArrayType::IntArrayType(LocationPtr location) : Type(std::move(location)) {
 }
 
 void IntArrayType::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
 
-ClassType::ClassType(int first_line, int first_column, IdentifierPtr class_name)
-    : Type(first_line, first_column), class_name_(std::move(class_name)) {
+ClassType::ClassType(LocationPtr location, IdentifierPtr class_name)
+    : Type(std::move(location)), class_name_(std::move(class_name)) {
 }
 
 void ClassType::Accept(Visitor& visitor) const {

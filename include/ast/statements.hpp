@@ -9,7 +9,7 @@
 
 class Statement : public ASTNode {
 public:
-    Statement(int first_line, int first_column);
+    Statement(LocationPtr location);
 };
 
 using StatementPtr = std::shared_ptr<Statement>;
@@ -17,7 +17,7 @@ using Statements = std::deque<StatementPtr>;
 
 class StatementList : public Statement {
 public:
-    StatementList(int first_line, int first_column, Statements statements);
+    StatementList(LocationPtr location, Statements statements);
     void Accept(Visitor& visitor) const override;
     const Statements& GetStatements() const;
 
@@ -27,7 +27,7 @@ private:
 
 class IfElseStatement : public Statement {
 public:
-    IfElseStatement(int first_line, int first_column, ExpressionPtr clause, StatementPtr if_body,
+    IfElseStatement(LocationPtr location, ExpressionPtr clause, StatementPtr if_body,
                     StatementPtr else_body);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetClause() const;
@@ -42,7 +42,7 @@ private:
 
 class WhileStatement : public Statement {
 public:
-    WhileStatement(int first_line, int first_column, ExpressionPtr clause, StatementPtr body);
+    WhileStatement(LocationPtr location, ExpressionPtr clause, StatementPtr body);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetClause() const;
     const StatementPtr& GetBody() const;
@@ -54,7 +54,7 @@ private:
 
 class PrintStatement : public Statement {
 public:
-    PrintStatement(int first_line, int first_column, ExpressionPtr value);
+    PrintStatement(LocationPtr location, ExpressionPtr value);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetValue() const;
 
@@ -64,8 +64,7 @@ private:
 
 class AssignmentStatement : public Statement {
 public:
-    AssignmentStatement(int first_line, int first_column, IdentifierPtr variable,
-                        ExpressionPtr value);
+    AssignmentStatement(LocationPtr location, IdentifierPtr variable, ExpressionPtr value);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetVariable() const;
     const ExpressionPtr& GetValue() const;
@@ -77,8 +76,8 @@ private:
 
 class ArrayAssignmentStatement : public Statement {
 public:
-    ArrayAssignmentStatement(int first_line, int first_column, IdentifierPtr variable,
-                             ExpressionPtr size, ExpressionPtr value);
+    ArrayAssignmentStatement(LocationPtr location, IdentifierPtr variable, ExpressionPtr size,
+                             ExpressionPtr value);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetVariable() const;
     const ExpressionPtr& GetSize() const;

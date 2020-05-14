@@ -8,7 +8,7 @@
 
 class MainClass : public ASTNode {
 public:
-    MainClass(int first_line, int first_column, IdentifierPtr class_name, StatementPtr body);
+    MainClass(LocationPtr location, IdentifierPtr class_name, StatementPtr body);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetClassName() const;
     const StatementPtr& GetBody() const;

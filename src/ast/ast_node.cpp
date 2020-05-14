@@ -1,13 +1,8 @@
 #include <ast/ast_node.hpp>
 
-ASTNode::ASTNode(int first_line, int first_column)
-    : first_line_(first_line), first_column_(first_column) {
+ASTNode::ASTNode(LocationPtr location) : location_(std::move(location)) {
 }
 
-int ASTNode::GetFirstLine() const {
-    return first_line_;
-}
-
-int ASTNode::GetFirstColumn() const {
-    return first_column_;
+const LocationPtr& ASTNode::GetLocation() const {
+    return location_;
 }

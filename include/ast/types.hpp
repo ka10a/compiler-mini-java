@@ -7,32 +7,32 @@
 
 class Type : public ASTNode {
 public:
-    Type(int first_line, int first_column);
+    Type(LocationPtr location);
 };
 
 using TypePtr = std::shared_ptr<Type>;
 
 class IntType : public Type {
 public:
-    IntType(int first_line, int first_column);
+    IntType(LocationPtr location);
     void Accept(Visitor& visitor) const override;
 };
 
 class BoolType : public Type {
 public:
-    BoolType(int first_line, int first_column);
+    BoolType(LocationPtr location);
     void Accept(Visitor& visitor) const override;
 };
 
 class IntArrayType : public Type {
 public:
-    IntArrayType(int first_line, int first_column);
+    IntArrayType(LocationPtr location);
     void Accept(Visitor& visitor) const override;
 };
 
 class ClassType : public Type {
 public:
-    ClassType(int first_line, int first_column, IdentifierPtr class_name);
+    ClassType(LocationPtr location, IdentifierPtr class_name);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetClassName() const;
 

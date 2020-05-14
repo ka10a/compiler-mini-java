@@ -10,7 +10,7 @@
 
 class ClassDeclaration : public ASTNode {
 public:
-    ClassDeclaration(int first_line, int first_column, IdentifierPtr class_name,
+    ClassDeclaration(LocationPtr location, IdentifierPtr class_name,
                      IdentifierPtr extends_class_name, VarDeclarations variables,
                      MethodDeclarations methods);
     void Accept(Visitor& visitor) const override;

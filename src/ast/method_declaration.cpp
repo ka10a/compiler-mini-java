@@ -1,11 +1,10 @@
 #include <ast/method_declaration.hpp>
 #include <visitors/visitor.hpp>
 
-MethodDeclaration::MethodDeclaration(int first_line, int first_column, TypePtr return_type,
-                                     IdentifierPtr name, VarDeclarations args,
-                                     VarDeclarations variables, Statements statements,
-                                     ExpressionPtr return_expression)
-    : ASTNode(first_line, first_column)
+MethodDeclaration::MethodDeclaration(LocationPtr location, TypePtr return_type, IdentifierPtr name,
+                                     VarDeclarations args, VarDeclarations variables,
+                                     Statements statements, ExpressionPtr return_expression)
+    : ASTNode(std::move(location))
     , return_type_(std::move(return_type))
     , name_(std::move(name))
     , args_(std::move(args))

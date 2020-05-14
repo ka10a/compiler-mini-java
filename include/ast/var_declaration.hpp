@@ -8,7 +8,7 @@
 
 class VarDeclaration : public ASTNode {
 public:
-    VarDeclaration(int first_line, int first_column, TypePtr type, IdentifierPtr var_name);
+    VarDeclaration(LocationPtr location, TypePtr type, IdentifierPtr var_name);
     void Accept(Visitor& visitor) const override;
     const TypePtr& GetType() const;
     const IdentifierPtr& GetVarName() const;

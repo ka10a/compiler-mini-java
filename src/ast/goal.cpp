@@ -1,9 +1,8 @@
 #include <ast/goal.hpp>
 #include <visitors/visitor.hpp>
 
-Goal::Goal(int first_line, int first_column, MainClassPtr main_class,
-           ClassDeclarations class_declarations)
-    : ASTNode(first_line, first_column)
+Goal::Goal(LocationPtr location, MainClassPtr main_class, ClassDeclarations class_declarations)
+    : ASTNode(std::move(location))
     , main_class_(std::move(main_class))
     , class_declarations_(std::move(class_declarations)) {
 }
