@@ -298,7 +298,7 @@ void ASTPrinter::Visit(const SubtractExpression& subtract_expression) {
     subtract_expression.GetRhs()->Accept(*this);
 }
 
-void ASTPrinter::Visit(const MultiplicateExpression& multiplicate_expression) {
+void ASTPrinter::Visit(const MultiplyExpression& multiplicate_expression) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"MultiplicateExpression\"];\n";
 

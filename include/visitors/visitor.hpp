@@ -34,7 +34,7 @@ public:
     virtual void Visit(const LessExpression&) = 0;
     virtual void Visit(const AddExpression&) = 0;
     virtual void Visit(const SubtractExpression&) = 0;
-    virtual void Visit(const MultiplicateExpression&) = 0;
+    virtual void Visit(const MultiplyExpression&) = 0;
 
     virtual void Visit(const ArrayExpression&) = 0;
     virtual void Visit(const LengthExpression&) = 0;

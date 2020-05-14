@@ -30,7 +30,7 @@ public:
     void Visit(const LessExpression& less_expression) override;
     void Visit(const AddExpression& add_expression) override;
     void Visit(const SubtractExpression& subtract_expression) override;
-    void Visit(const MultiplicateExpression& multiplicate_expression) override;
+    void Visit(const MultiplyExpression& multiplicate_expression) override;
 
     void Visit(const ArrayExpression& array_expression) override;
     void Visit(const LengthExpression& length_expression) override;

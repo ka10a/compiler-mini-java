@@ -70,20 +70,20 @@ const ExpressionPtr& SubtractExpression::GetRhs() const {
     return rhs_;
 }
 
-MultiplicateExpression::MultiplicateExpression(int first_line, int first_column, ExpressionPtr lhs,
+MultiplyExpression::MultiplyExpression(int first_line, int first_column, ExpressionPtr lhs,
                                        ExpressionPtr rhs)
     : Expression(first_line, first_column), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
-void MultiplicateExpression::Accept(Visitor& visitor) const {
+void MultiplyExpression::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
 
-const ExpressionPtr& MultiplicateExpression::GetLhs() const {
+const ExpressionPtr& MultiplyExpression::GetLhs() const {
     return lhs_;
 }
 
-const ExpressionPtr& MultiplicateExpression::GetRhs() const {
+const ExpressionPtr& MultiplyExpression::GetRhs() const {
     return rhs_;
 }
 

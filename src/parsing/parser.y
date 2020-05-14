@@ -311,7 +311,7 @@ Expression:
         $$ = std::make_shared<SubtractExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "*" Expression {
-        $$ = std::make_shared<MultiplicateExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
+        $$ = std::make_shared<MultiplyExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));
     }
     | Expression "[" Expression "]" {
         $$ = std::make_shared<ArrayExpression>(loc.begin.line, loc.begin.column, std::move($1), std::move($3));

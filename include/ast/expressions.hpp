@@ -62,9 +62,9 @@ private:
     ExpressionPtr rhs_;
 };
 
-class MultiplicateExpression : public Expression {
+class MultiplyExpression : public Expression {
 public:
-    MultiplicateExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs);
+    MultiplyExpression(int first_line, int first_column, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
