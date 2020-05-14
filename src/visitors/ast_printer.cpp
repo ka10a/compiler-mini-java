@@ -79,7 +79,7 @@ void ASTPrinter::Visit(const MethodDeclaration& method_declaration) {
 
     node_number_++;
     PrintEdge(curr, node_number_);
-    method_declaration.GetName()->Accept(*this);
+    method_declaration.GetMethodName()->Accept(*this);
 
     for (const auto& arg : method_declaration.GetArgs()) {
         node_number_++;

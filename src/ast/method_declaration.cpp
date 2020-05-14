@@ -1,12 +1,13 @@
 #include <ast/method_declaration.hpp>
 #include <visitors/visitor.hpp>
 
-MethodDeclaration::MethodDeclaration(LocationPtr location, TypePtr return_type, IdentifierPtr name,
-                                     VarDeclarations args, VarDeclarations variables,
-                                     Statements statements, ExpressionPtr return_expression)
+MethodDeclaration::MethodDeclaration(LocationPtr location, TypePtr return_type,
+                                     IdentifierPtr method_name, VarDeclarations args,
+                                     VarDeclarations variables, Statements statements,
+                                     ExpressionPtr return_expression)
     : ASTNode(std::move(location))
     , return_type_(std::move(return_type))
-    , name_(std::move(name))
+    , method_name_(std::move(method_name))
     , args_(std::move(args))
     , variables_(std::move(variables))
     , statements_(std::move(statements))
@@ -21,8 +22,8 @@ const TypePtr& MethodDeclaration::GetReturnType() const {
     return return_type_;
 }
 
-const IdentifierPtr& MethodDeclaration::GetName() const {
-    return name_;
+const IdentifierPtr& MethodDeclaration::GetMethodName() const {
+    return method_name_;
 }
 
 const VarDeclarations& MethodDeclaration::GetArgs() const {
