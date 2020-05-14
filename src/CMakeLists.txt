@@ -31,6 +31,10 @@ add_executable(
     ast/statements.cpp
     ast/types.cpp
     ast/var_declaration.cpp
+    symbol_table/class_info.cpp
+    symbol_table/entity_info.cpp
+    symbol_table/method_info.cpp
+    symbol_table/var_info.cpp
     visitors/ast_printer.cpp
 )
 
