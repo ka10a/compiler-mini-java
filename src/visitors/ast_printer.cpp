@@ -93,7 +93,7 @@ void ASTPrinter::Visit(const MethodDeclaration& method_declaration) {
 
         node_number_++;
         PrintEdge(arg_number, node_number_);
-        arg->GetName()->Accept(*this);
+        arg->GetVarName()->Accept(*this);
     }
 
     for (const auto& var : method_declaration.GetVariables()) {
@@ -127,7 +127,7 @@ void ASTPrinter::Visit(const VarDeclaration& var_declaration) {
 
     node_number_++;
     PrintEdge(curr, node_number_);
-    var_declaration.GetName()->Accept(*this);
+    var_declaration.GetVarName()->Accept(*this);
 }
 
 void ASTPrinter::Visit(const IntType& /* int_type */) {

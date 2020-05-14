@@ -8,14 +8,14 @@
 
 class VarDeclaration : public ASTNode {
 public:
-    VarDeclaration(int first_line, int first_column, TypePtr type, IdentifierPtr name);
+    VarDeclaration(int first_line, int first_column, TypePtr type, IdentifierPtr var_name);
     void Accept(Visitor& visitor) const override;
     const TypePtr& GetType() const;
-    const IdentifierPtr& GetName() const;
+    const IdentifierPtr& GetVarName() const;
 
 private:
     TypePtr type_;
-    IdentifierPtr name_;
+    IdentifierPtr var_name_;
 };
 
 using VarDeclarationPtr = std::shared_ptr<VarDeclaration>;
