@@ -240,7 +240,7 @@ Type:
         $$ = std::make_shared<BoolType>(loc.begin.line, loc.begin.column);
     }
     | Identifier {
-        $$ = std::make_shared<IdentifierType>(loc.begin.line, loc.begin.column, std::move($1));
+        $$ = std::make_shared<ClassType>(loc.begin.line, loc.begin.column, std::move($1));
     }
 ;
 

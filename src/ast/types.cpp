@@ -25,14 +25,14 @@ void IntArrayType::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
 
-IdentifierType::IdentifierType(int first_line, int first_column, IdentifierPtr class_name)
+ClassType::ClassType(int first_line, int first_column, IdentifierPtr class_name)
     : Type(first_line, first_column), class_name_(std::move(class_name)) {
 }
 
-void IdentifierType::Accept(Visitor& visitor) const {
+void ClassType::Accept(Visitor& visitor) const {
     visitor.Visit(*this);
 }
 
-const IdentifierPtr& IdentifierType::GetClassName() const {
+const IdentifierPtr& ClassType::GetClassName() const {
     return class_name_;
 }

@@ -157,13 +157,13 @@ void ASTPrinter::Visit(const IntArrayType& /* int_array_type */) {
     PrintEdge(curr, node_number_);
 }
 
-void ASTPrinter::Visit(const IdentifierType& identifier_type) {
+void ASTPrinter::Visit(const ClassType& class_type) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"IdentifierType\"];\n";
 
     node_number_++;
     PrintEdge(curr, node_number_);
-    identifier_type.GetClassName()->Accept(*this);
+    class_type.GetClassName()->Accept(*this);
 }
 
 void ASTPrinter::Visit(const StatementList& statement_list) {

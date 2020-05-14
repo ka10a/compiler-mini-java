@@ -30,9 +30,9 @@ public:
     void Accept(Visitor& visitor) const override;
 };
 
-class IdentifierType : public Type {
+class ClassType : public Type {
 public:
-    IdentifierType(int first_line, int first_column, IdentifierPtr class_name);
+    ClassType(int first_line, int first_column, IdentifierPtr class_name);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetClassName() const;
 

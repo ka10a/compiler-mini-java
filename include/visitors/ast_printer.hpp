@@ -17,7 +17,7 @@ public:
     void Visit(const IntType& int_type) override;
     void Visit(const BoolType& bool_type) override;
     void Visit(const IntArrayType& int_array_type) override;
-    void Visit(const IdentifierType& identifier_type) override;
+    void Visit(const ClassType& class_type) override;
 
     void Visit(const StatementList& statement_list) override;
     void Visit(const IfElseStatement& if_else_statement) override;
