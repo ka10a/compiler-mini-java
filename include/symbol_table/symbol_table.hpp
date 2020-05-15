@@ -24,3 +24,5 @@ private:
     ClassInfoPtr main_class_;
     std::unordered_map<std::string_view, ClassInfoPtr> classes_;
 };
+
+using SymbolTablePtr = std::shared_ptr<SymbolTable>;

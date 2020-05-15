@@ -37,6 +37,7 @@ add_executable(
     symbol_table/symbol_table.cpp
     symbol_table/var_info.cpp
     visitors/ast_printer.cpp
+    visitors/symbol_table_builder.cpp
 )
 
 target_include_directories(compiler-mini-java PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
