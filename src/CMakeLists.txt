@@ -34,6 +34,7 @@ add_executable(
     symbol_table/class_info.cpp
     symbol_table/entity_info.cpp
     symbol_table/method_info.cpp
+    symbol_table/symbol_table.cpp
     symbol_table/var_info.cpp
     visitors/ast_printer.cpp
 )
