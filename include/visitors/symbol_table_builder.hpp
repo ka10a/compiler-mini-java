@@ -13,9 +13,6 @@ class SymbolTableBuilder : public Visitor {
 public:
     explicit SymbolTableBuilder();
 
-    // TODO: создаем указатель на таблицу здесь, обходим AST, вызывая Visit(const Goal&),
-    //  печатаем ошибки в std::cerr (у std::ostringstream есть метод str) и возвращаем
-    //  SymbolTablePtr, сделав на него std::move.
     SymbolTablePtr Build(const Goal& goal);
 
 public:

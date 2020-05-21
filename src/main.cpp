@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     ASTPrinter tree_printer(graph_filename);
     goal->Accept(tree_printer);
 
-    auto symbol_table = SymbolTableBuilder().Build(goal);
+    auto symbol_table = SymbolTableBuilder().Build(*goal);
 
     return 0;
 }

@@ -1,7 +1,7 @@
 #include <visitors/symbol_table_builder.hpp>
 
 SymbolTableBuilder::SymbolTableBuilder()
-    : symbol_table_(new SymbolTable)
+    : symbol_table_(std::make_shared<SymbolTable>())
     , current_class_(nullptr)
     , current_method_(nullptr)
     , current_var_(nullptr)
@@ -22,9 +22,10 @@ void SymbolTableBuilder::Visit(const Goal& goal) {
     goal.GetMainClass()->Accept(*this);
 
     for (const auto& class_decl : goal.GetClassDeclarations()) {
-        current_class_ = symbol_table_->GetOrdinaryClass(class_decl->GetClassName()->GetName());
+        std::string name = class_decl->GetClassName()->GetName();
+        current_class_ = symbol_table_->GetOrdinaryClass(name);
         for (const auto& [cl_name, cl] : symbol_table_->GetClasses()) {
-            if (cl->HasExtendsClass() && cl->GetExtendsName() == current_class_->GetName()) {
+            if (cl && cl->HasExtendsClass() && cl->GetExtendsName() == current_class_->GetName()) {
                 for (const auto& [var_name, var] : cl->GetVarInfoStorage()) {
                     if (current_class_->HasVariable(var->GetName())) {
                         errors_ << "Error at line: " << var->GetLocation()->begin.line
@@ -102,8 +103,11 @@ void SymbolTableBuilder::Visit(const MainClass& main_class) {
 
 void SymbolTableBuilder::Visit(const ClassDeclaration& class_declaration) {
     auto name = class_declaration.GetClassName()->GetName();
-    current_class_ = std::make_shared<ClassInfo>(
-        name, class_declaration.GetLocation(), class_declaration.GetExtendsClassName()->GetName());
+    current_class_ =
+        class_declaration.GetExtendsClassName()
+            ? std::make_shared<ClassInfo>(name, class_declaration.GetLocation(),
+                                          class_declaration.GetExtendsClassName()->GetName())
+            : std::make_shared<ClassInfo>(name, class_declaration.GetLocation());
 
     if (symbol_table_->HasClass(current_class_->GetName())) {
         errors_ << "Error at line: " << class_declaration.GetLocation()->begin.line
@@ -111,8 +115,9 @@ void SymbolTableBuilder::Visit(const ClassDeclaration& class_declaration) {
                 << ". Message: class " << name << " was already declared.\n";
     }
 
+    symbol_table_->AddOrdinaryClass(current_class_);
+
     for (const auto& var_declaration : class_declaration.GetVariables()) {
-        symbol_table_->AddOrdinaryClass(current_class_);
         var_declaration->Accept(*this);
     }
 
@@ -448,7 +453,7 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
                 << method_call_expression.GetClassEntity()->GetLocation()->begin.line << " column: "
                 << method_call_expression.GetClassEntity()->GetLocation()->begin.column
                 << ". Message: calling a method " << name << " from a primitive type.\n";
-        //        return;
+        return;
     }
 
     if (!current_class_->HasMethod(name)) {
@@ -457,7 +462,7 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
                 << method_call_expression.GetMethodName()->GetLocation()->begin.line << " column: "
                 << method_call_expression.GetMethodName()->GetLocation()->begin.column
                 << ". Message: method " << name << " doesn't exist.\n";
-        //        return;
+        return;
     }
 
     auto met = current_class_->GetMethodInfo(name);
@@ -471,11 +476,11 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
     current_type_ = InnerType::CLASS;
 }
 
-void SymbolTableBuilder::Visit(const IntExpression& int_expression) {
+void SymbolTableBuilder::Visit(const IntExpression& /* int_expression */) {
     current_type_ = InnerType::INT;
 }
 
-void SymbolTableBuilder::Visit(const BoolExpression& bool_expression) {
+void SymbolTableBuilder::Visit(const BoolExpression& /* bool_expression */) {
     current_type_ = InnerType::BOOL;
 }
 
@@ -483,7 +488,7 @@ void SymbolTableBuilder::Visit(const IdentifierExpression& identifier_expression
     identifier_expression.GetVariableName()->Accept(*this);
 }
 
-void SymbolTableBuilder::Visit(const ThisExpression& this_expression) {
+void SymbolTableBuilder::Visit(const ThisExpression& /* this_expression */) {
     current_type_ = InnerType::CLASS;
 }
 
@@ -521,10 +526,10 @@ void SymbolTableBuilder::Visit(const Identifier& identifier) {
     if (current_class_->HasVariable(name)) {
         auto var = current_class_->GetVariableInfo(name);
         current_type_ = var->GetType()->GetInnerType();
-    } else if (current_method_->HasVariable(name)) {
+    } else if (current_method_ && current_method_->HasVariable(name)) {
         auto var = current_method_->GetVariableInfo(name);
         current_type_ = var->GetType()->GetInnerType();
-    } else if (current_method_->HasArg(name)) {
+    } else if (current_method_ && current_method_->HasArg(name)) {
         auto var = current_method_->GetArgInfo(name);
         current_type_ = var->GetType()->GetInnerType();
     } else if (symbol_table_->HasClass(name)) {
