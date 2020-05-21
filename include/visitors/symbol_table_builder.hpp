@@ -9,9 +9,9 @@
 #include <symbol_table/var_info.hpp>
 #include <visitors/visitor.hpp>
 
-class SymbolTableBuilder : Visitor {
+class SymbolTableBuilder : public Visitor {
 public:
-    SymbolTableBuilder() = default;
+    explicit SymbolTableBuilder();
 
     // TODO: создаем указатель на таблицу здесь, обходим AST, вызывая Visit(const Goal&),
     //  печатаем ошибки в std::cerr (у std::ostringstream есть метод str) и возвращаем
@@ -24,6 +24,11 @@ public:
     void Visit(const ClassDeclaration& class_declaration) override;
     void Visit(const MethodDeclaration& method_declaration) override;
     void Visit(const VarDeclaration& var_declaration) override;
+
+    void Visit(const IntType&) override ;
+    void Visit(const BoolType&) override ;
+    void Visit(const IntArrayType&) override;
+    void Visit(const ClassType&) override ;
 
     void Visit(const StatementList& statement_list) override;
     void Visit(const IfElseStatement& if_else_statement) override;
@@ -61,5 +66,7 @@ private:
     ClassInfoPtr current_class_;
     MethodInfoPtr current_method_;
     VarInfoPtr current_var_;
+    InnerType current_type_;
+    bool is_valid_expr_;
     std::ostringstream errors_;
 };

@@ -15,12 +15,15 @@ public:
     const TypePtr& GetReturnType() const;
     const VarInfoPtr& GetArgInfo(std::string_view arg_name) const;
     const VarInfoPtr& GetVariableInfo(std::string_view variable_name) const;
+    size_t GetArgInfoStorageSize() const;
+    const VarInfoStorage& GetArgInfoStorage() const;
+    const VarInfoStorage& GetVarInfoStorage() const;
 
     bool HasArg(std::string_view arg_name) const;
     bool HasVariable(std::string_view variable_name) const;
 
-    MethodInfo& AddArgInfo(const VarDeclarationPtr& arg);
-    MethodInfo& AddVariableInfo(const VarDeclarationPtr& variable);
+    MethodInfo& AddArgInfo(VarInfoPtr arg);
+    MethodInfo& AddVariableInfo(VarInfoPtr variable);
 
 private:
     TypePtr return_type_;

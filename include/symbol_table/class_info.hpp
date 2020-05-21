@@ -24,13 +24,15 @@ public:
     const VarInfoPtr& GetVariableInfo(std::string_view variable_name) const;
     MethodInfoPtr& GetMethodInfo(std::string_view method_name);
     const MethodInfoPtr& GetMethodInfo(std::string_view method_name) const;
+    const VarInfoStorage& GetVarInfoStorage() const;
+    const MethodInfoStorage& GetMethodInfoStorage() const;
 
     bool HasExtendsClass() const;
     bool HasVariable(std::string_view variable_name) const;
     bool HasMethod(std::string_view method_name) const;
 
-    ClassInfo& AddVariableInfo(const VarDeclarationPtr& variable);
-    ClassInfo& AddMethodInfo(const MethodDeclarationPtr& method);
+    ClassInfo& AddVariableInfo(VarInfoPtr variable);
+    ClassInfo& AddMethodInfo(MethodInfoPtr method);
 
 private:
     std::optional<std::string_view> extends_name_;

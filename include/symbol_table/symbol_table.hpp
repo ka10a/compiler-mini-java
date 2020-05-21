@@ -15,14 +15,16 @@ public:
     const ClassInfoPtr& GetOrdinaryClass(std::string_view class_name) const;
     const ClassInfoPtr& GetMainClass() const;
 
+    const ClassInfoStorage& GetClasses() const;
+
     bool HasClass(std::string_view class_name) const;
 
-    SymbolTable& AddMainClass(const MainClassPtr& main_class);
-    SymbolTable& AddOrdinaryClass(const ClassDeclarationPtr& class_declaration);
+    SymbolTable& AddMainClass(ClassInfoPtr main_class);
+    SymbolTable& AddOrdinaryClass(ClassInfoPtr class_declaration);
 
 private:
     ClassInfoPtr main_class_;
-    std::unordered_map<std::string_view, ClassInfoPtr> classes_;
+    ClassInfoStorage classes_;
 };
 
 using SymbolTablePtr = std::shared_ptr<SymbolTable>;
