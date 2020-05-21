@@ -259,7 +259,7 @@ void SymbolTableBuilder::Visit(const AssignmentStatement& assignment_statement) 
     const auto& name = assignment_statement.GetVariable()->GetName();
     if (current_method_->HasVariable(name)) {
         auto var = current_method_->GetVariableInfo(name);
-        if (is_valid_expr_ && current_type_ != current_var_->GetType()->GetInnerType()) {
+        if (is_valid_expr_ && current_type_ != var->GetType()->GetInnerType()) {
             errors_ << "Error at line: "
                     << assignment_statement.GetValue()->GetLocation()->begin.line
                     << " column: " << assignment_statement.GetValue()->GetLocation()->begin.column
@@ -473,7 +473,7 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
                 << ". Message: method " << name << " was called with wrong number of args\n";
         return;
     }
-    current_type_ = InnerType::CLASS;
+    current_type_ = met->GetReturnType()->GetInnerType();
 }
 
 void SymbolTableBuilder::Visit(const IntExpression& /* int_expression */) {
@@ -545,7 +545,8 @@ void SymbolTableBuilder::Visit(const Identifier& identifier) {
 }
 
 void SymbolTableBuilder::PrintErrors() const {
-    std::cerr << errors_.str();
+    std::string errors = errors_.str();
+    std::cerr << errors;
     for (const auto& [cl_name, cl] : symbol_table_->GetClasses()) {
         std::cerr << "class " << cl_name << "\n";
         for (const auto& [m_name, m] : cl->GetMethodInfoStorage()) {
@@ -559,7 +560,7 @@ void SymbolTableBuilder::PrintErrors() const {
         }
     }
 
-    if (errors_) {
+    if (!errors.empty()) {
         throw std::logic_error("Errors found. You are so stupid, maaaaan.");
     }
 }
