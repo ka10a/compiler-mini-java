@@ -22,7 +22,7 @@ void SymbolTableBuilder::Visit(const Goal& goal) {
     goal.GetMainClass()->Accept(*this);
 
     for (const auto& class_decl : goal.GetClassDeclarations()) {
-        std::string name = class_decl->GetClassName()->GetName();
+        const auto& name = class_decl->GetClassName()->GetName();
         current_class_ = symbol_table_->GetOrdinaryClass(name);
         for (const auto& [cl_name, cl] : symbol_table_->GetClasses()) {
             if (cl && cl->HasExtendsClass() && cl->GetExtendsName() == current_class_->GetName()) {
@@ -86,7 +86,7 @@ void SymbolTableBuilder::Visit(const Goal& goal) {
 }
 
 void SymbolTableBuilder::Visit(const MainClass& main_class) {
-    auto name = main_class.GetClassName()->GetName();
+    const auto& name = main_class.GetClassName()->GetName();
     current_class_ = std::make_shared<ClassInfo>(name, main_class.GetLocation());
 
     if (symbol_table_->HasClass(current_class_->GetName())) {
@@ -102,7 +102,7 @@ void SymbolTableBuilder::Visit(const MainClass& main_class) {
 }
 
 void SymbolTableBuilder::Visit(const ClassDeclaration& class_declaration) {
-    auto name = class_declaration.GetClassName()->GetName();
+    const auto& name = class_declaration.GetClassName()->GetName();
     current_class_ =
         class_declaration.GetExtendsClassName()
             ? std::make_shared<ClassInfo>(name, class_declaration.GetLocation(),
@@ -129,7 +129,7 @@ void SymbolTableBuilder::Visit(const ClassDeclaration& class_declaration) {
 }
 
 void SymbolTableBuilder::Visit(const MethodDeclaration& method_declaration) {
-    auto name = method_declaration.GetMethodName()->GetName();
+    const auto& name = method_declaration.GetMethodName()->GetName();
     current_method_ = std::make_shared<MethodInfo>(name, method_declaration.GetLocation(),
                                                    method_declaration.GetReturnType());
 
@@ -191,11 +191,11 @@ void SymbolTableBuilder::Visit(const MethodDeclaration& method_declaration) {
 }
 
 void SymbolTableBuilder::Visit(const VarDeclaration& var_declaration) {
-    auto name = var_declaration.GetVarName()->GetName();
+    const auto& name = var_declaration.GetVarName()->GetName();
     current_var_ =
         std::make_shared<VarInfo>(name, var_declaration.GetLocation(), var_declaration.GetType());
 
-    if (current_method_ != nullptr) {
+    if (current_method_) {
         if (current_method_->HasVariable(current_var_->GetName())) {
             errors_ << "Error at line: " << var_declaration.GetLocation()->begin.line
                     << " column: " << var_declaration.GetLocation()->begin.column
@@ -256,7 +256,7 @@ void SymbolTableBuilder::Visit(const PrintStatement& print_statement) {
 void SymbolTableBuilder::Visit(const AssignmentStatement& assignment_statement) {
     assignment_statement.GetValue()->Accept(*this);
 
-    auto name = assignment_statement.GetVariable()->GetName();
+    const auto& name = assignment_statement.GetVariable()->GetName();
     if (current_method_->HasVariable(name)) {
         auto var = current_method_->GetVariableInfo(name);
         if (is_valid_expr_ && current_type_ != current_var_->GetType()->GetInnerType()) {
@@ -302,7 +302,7 @@ void SymbolTableBuilder::Visit(const ArrayAssignmentStatement& array_assignment_
     is_valid_expr_ = true;
     current_type_ = InnerType::NONE;
 
-    auto name = array_assignment_statement.GetVariable()->GetName();
+    const auto& name = array_assignment_statement.GetVariable()->GetName();
     if (!current_method_->HasVariable(name) && !current_class_->HasVariable(name)) {
         errors_ << "Error at line: "
                 << array_assignment_statement.GetVariable()->GetLocation()->begin.line
@@ -445,7 +445,7 @@ void SymbolTableBuilder::Visit(const LengthExpression& length_expression) {
 
 void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expression) {
     method_call_expression.GetClassEntity()->Accept(*this);
-    auto name = method_call_expression.GetMethodName()->GetName();
+    const auto& name = method_call_expression.GetMethodName()->GetName();
     if (current_type_ == InnerType::INT || current_type_ == InnerType::NONE ||
         current_type_ == InnerType::INT_ARRAY || current_type_ == InnerType::BOOL) {
         is_valid_expr_ = false;
@@ -471,7 +471,7 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
         errors_ << "Error at line: " << method_call_expression.GetLocation()->begin.line
                 << " column: " << method_call_expression.GetLocation()->begin.column
                 << ". Message: method " << name << " was called with wrong number of args\n";
-        //        return;
+        return;
     }
     current_type_ = InnerType::CLASS;
 }
@@ -522,7 +522,7 @@ void SymbolTableBuilder::Visit(const NotExpression& not_expression) {
 }
 
 void SymbolTableBuilder::Visit(const Identifier& identifier) {
-    const auto name = identifier.GetName();
+    const auto& name = identifier.GetName();
     if (current_class_->HasVariable(name)) {
         auto var = current_class_->GetVariableInfo(name);
         current_type_ = var->GetType()->GetInnerType();
@@ -546,18 +546,36 @@ void SymbolTableBuilder::Visit(const Identifier& identifier) {
 
 void SymbolTableBuilder::PrintErrors() const {
     std::cerr << errors_.str();
+    for (const auto& [cl_name, cl] : symbol_table_->GetClasses()) {
+        std::cerr << "class " << cl_name << "\n";
+        for (const auto& [m_name, m] : cl->GetMethodInfoStorage()) {
+            std::cerr << "method " << m_name << "\n";
+            for (const auto& [arg_name, arg] : m->GetArgInfoStorage()) {
+                std::cerr << "arg " << arg_name << "\n";
+            }
+            for (const auto& [var_name, var] : m->GetVarInfoStorage()) {
+                std::cerr << "var " << var_name << "\n";
+            }
+        }
+    }
+
     if (errors_) {
         throw std::logic_error("Errors found. You are so stupid, maaaaan.");
     }
 }
-void SymbolTableBuilder::Visit(const IntType&) {
+
+void SymbolTableBuilder::Visit(const IntType& /* int_type */) {
+    throw std::logic_error("You shouldn't be here.");
 }
 
-void SymbolTableBuilder::Visit(const BoolType&) {
+void SymbolTableBuilder::Visit(const BoolType& /* bool_type */) {
+    throw std::logic_error("You shouldn't be here.");
 }
 
-void SymbolTableBuilder::Visit(const IntArrayType&) {
+void SymbolTableBuilder::Visit(const IntArrayType& /* int_array_type */) {
+    throw std::logic_error("You shouldn't be here.");
 }
 
-void SymbolTableBuilder::Visit(const ClassType&) {
+void SymbolTableBuilder::Visit(const ClassType& /* class_type */) {
+    throw std::logic_error("You shouldn't be here.");
 }
