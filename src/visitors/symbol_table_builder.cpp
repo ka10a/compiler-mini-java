@@ -267,7 +267,7 @@ void SymbolTableBuilder::Visit(const AssignmentStatement& assignment_statement) 
         }
     } else if (current_class_->HasVariable(name)) {
         auto var = current_class_->GetVariableInfo(name);
-        if (is_valid_expr_ && current_type_ != current_var_->GetType()->GetInnerType()) {
+        if (is_valid_expr_ && current_type_ != var->GetType()->GetInnerType()) {
             errors_ << "Error at line: "
                     << assignment_statement.GetValue()->GetLocation()->begin.line
                     << " column: " << assignment_statement.GetValue()->GetLocation()->begin.column
@@ -457,6 +457,7 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
     }
 
     if (!current_class_->HasMethod(name)) {
+        current_type_ = InnerType::INT;
         return;
     }
 
