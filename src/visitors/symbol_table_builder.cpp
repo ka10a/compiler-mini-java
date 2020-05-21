@@ -17,8 +17,24 @@ SymbolTablePtr SymbolTableBuilder::Build(const Goal& goal) {
 
 void SymbolTableBuilder::Visit(const Goal& goal) {
     for (const auto& class_decl : goal.GetClassDeclarations()) {
+        const auto& cl_name = class_decl->GetClassName()->GetName();
+        if (symbol_table_->HasClass(cl_name)) {
+            errors_ << "Error at line: " << class_decl->GetLocation()->begin.line
+                    << " column: " << class_decl->GetLocation()->begin.column << ". Message: class "
+                    << cl_name << " was already declared.\n";
+            continue;
+        }
+        symbol_table_->AddOrdinaryClass(
+            class_decl->GetExtendsClassName()
+                ? std::make_shared<ClassInfo>(cl_name, class_decl->GetLocation(),
+                                              class_decl->GetExtendsClassName()->GetName())
+                : std::make_shared<ClassInfo>(cl_name, class_decl->GetLocation()));
+    }
+
+    for (const auto& class_decl : goal.GetClassDeclarations()) {
         class_decl->Accept(*this);
     }
+
     goal.GetMainClass()->Accept(*this);
 
     for (const auto& class_decl : goal.GetClassDeclarations()) {
@@ -103,35 +119,26 @@ void SymbolTableBuilder::Visit(const MainClass& main_class) {
 
 void SymbolTableBuilder::Visit(const ClassDeclaration& class_declaration) {
     const auto& name = class_declaration.GetClassName()->GetName();
-    current_class_ =
-        class_declaration.GetExtendsClassName()
-            ? std::make_shared<ClassInfo>(name, class_declaration.GetLocation(),
-                                          class_declaration.GetExtendsClassName()->GetName())
-            : std::make_shared<ClassInfo>(name, class_declaration.GetLocation());
-
-    if (symbol_table_->HasClass(current_class_->GetName())) {
-        errors_ << "Error at line: " << class_declaration.GetLocation()->begin.line
-                << " column: " << class_declaration.GetLocation()->begin.column
-                << ". Message: class " << name << " was already declared.\n";
-    }
-
-    symbol_table_->AddOrdinaryClass(current_class_);
+    current_class_ = symbol_table_->GetOrdinaryClass(name);
 
     for (const auto& var_declaration : class_declaration.GetVariables()) {
         var_declaration->Accept(*this);
     }
 
     for (const auto& method_declaration : class_declaration.GetMethods()) {
+        const auto& method_name = method_declaration->GetMethodName()->GetName();
+        current_class_->AddMethodInfo(std::make_shared<MethodInfo>(
+            method_name, method_declaration->GetLocation(), method_declaration->GetReturnType()));
+    }
+    for (const auto& method_declaration : class_declaration.GetMethods()) {
         method_declaration->Accept(*this);
     }
-
     current_class_ = nullptr;
 }
 
 void SymbolTableBuilder::Visit(const MethodDeclaration& method_declaration) {
     const auto& name = method_declaration.GetMethodName()->GetName();
-    current_method_ = std::make_shared<MethodInfo>(name, method_declaration.GetLocation(),
-                                                   method_declaration.GetReturnType());
+    current_method_ = current_class_->GetMethodInfo(name);
 
     for (const auto& var : method_declaration.GetVariables()) {
         var->Accept(*this);
@@ -169,8 +176,6 @@ void SymbolTableBuilder::Visit(const MethodDeclaration& method_declaration) {
             }
         }
     }
-
-    current_class_->AddMethodInfo(current_method_);
 
     for (const auto& stat : method_declaration.GetStatements()) {
         stat->Accept(*this);
@@ -457,18 +462,16 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
     }
 
     if (!current_class_->HasMethod(name)) {
-        current_type_ = InnerType::INT;
+        is_valid_expr_ = false;
+        errors_ << "Error at line: "
+                << method_call_expression.GetMethodName()->GetLocation()->begin.line << " column: "
+                << method_call_expression.GetMethodName()->GetLocation()->begin.column
+                << ". Message: method " << name << " doesn't exist in class "
+                << current_class_->GetName() << "\n";
         return;
     }
 
     auto met = current_class_->GetMethodInfo(name);
-    if (met && met->GetArgInfoStorageSize() != method_call_expression.GetParams().size()) {
-        is_valid_expr_ = false;
-        errors_ << "Error at line: " << method_call_expression.GetLocation()->begin.line
-                << " column: " << method_call_expression.GetLocation()->begin.column
-                << ". Message: method " << name << " was called with wrong number of args\n";
-        return;
-    }
     current_type_ = met->GetReturnType()->GetInnerType();
 }
 
@@ -512,7 +515,7 @@ void SymbolTableBuilder::Visit(const NotExpression& not_expression) {
         is_valid_expr_ = false;
         errors_ << "Error at line: " << not_expression.GetExpression()->GetLocation()->begin.line
                 << " column: " << not_expression.GetExpression()->GetLocation()->begin.column
-                << ". Message: boolean type is required.\n";
+                << ". Message: bool type is required.\n";
     }
     current_type_ = InnerType::BOOL;
 }
@@ -544,14 +547,17 @@ void SymbolTableBuilder::PrintErrors() const {
     std::string errors = errors_.str();
     std::cerr << errors;
     for (const auto& [cl_name, cl] : symbol_table_->GetClasses()) {
-        std::cerr << "class " << cl_name << "\n";
+        std::cerr << "class " << cl_name << " " << cl->GetName() << "\n";
         for (const auto& [m_name, m] : cl->GetMethodInfoStorage()) {
-            std::cerr << "method " << m_name << "\n";
+            std::cerr << "method " << m_name << " "
+                      << static_cast<size_t>(m->GetReturnType()->GetInnerType()) << "\n";
             for (const auto& [arg_name, arg] : m->GetArgInfoStorage()) {
-                std::cerr << "arg " << arg_name << "\n";
+                std::cerr << "arg " << arg_name << " "
+                          << static_cast<size_t>(arg->GetType()->GetInnerType()) << "\n";
             }
             for (const auto& [var_name, var] : m->GetVarInfoStorage()) {
-                std::cerr << "var " << var_name << "\n";
+                std::cerr << "var " << var_name << " "
+                          << static_cast<size_t>(var->GetType()->GetInnerType()) << "\n";
             }
         }
     }

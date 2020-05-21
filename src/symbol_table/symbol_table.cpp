@@ -26,12 +26,12 @@ SymbolTable& SymbolTable::AddMainClass(ClassInfoPtr main_class) {
 }
 
 SymbolTable& SymbolTable::AddOrdinaryClass(ClassInfoPtr class_decl) {
-//    std::string_view class_name = class_decl->GetClassName();
-//    classes_[class_name] =
-//        class_decl->GetExtendsClassName()
-//            ? std::make_shared<ClassInfo>(class_name, class_decl->GetLocation(),
-//                                          class_decl->GetExtendsClassName()->GetName())
-//            : std::make_shared<ClassInfo>(class_name, class_decl->GetLocation());
+    //    std::string_view class_name = class_decl->GetClassName();
+    //    classes_[class_name] =
+    //        class_decl->GetExtendsClassName()
+    //            ? std::make_shared<ClassInfo>(class_name, class_decl->GetLocation(),
+    //                                          class_decl->GetExtendsClassName()->GetName())
+    //            : std::make_shared<ClassInfo>(class_name, class_decl->GetLocation());
     classes_[class_decl->GetName()] = std::move(class_decl);
     return *this;
 }

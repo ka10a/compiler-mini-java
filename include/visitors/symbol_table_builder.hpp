@@ -22,10 +22,10 @@ public:
     void Visit(const MethodDeclaration& method_declaration) override;
     void Visit(const VarDeclaration& var_declaration) override;
 
-    void Visit(const IntType&) override ;
-    void Visit(const BoolType&) override ;
+    void Visit(const IntType&) override;
+    void Visit(const BoolType&) override;
     void Visit(const IntArrayType&) override;
-    void Visit(const ClassType&) override ;
+    void Visit(const ClassType&) override;
 
     void Visit(const StatementList& statement_list) override;
     void Visit(const IfElseStatement& if_else_statement) override;

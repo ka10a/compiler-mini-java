@@ -43,10 +43,10 @@ ClassInfo& ClassInfo::AddMethodInfo(MethodInfoPtr method) {
     return *this;
 }
 
-const VarInfoStorage& ClassInfo::GetVarInfoStorage() const{
+const VarInfoStorage& ClassInfo::GetVarInfoStorage() const {
     return variables_;
 }
 
-const MethodInfoStorage& ClassInfo::GetMethodInfoStorage() const{
+const MethodInfoStorage& ClassInfo::GetMethodInfoStorage() const {
     return methods_;
 }

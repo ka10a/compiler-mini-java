@@ -51,7 +51,13 @@ int main(int argc, char* argv[]) {
     ASTPrinter tree_printer(graph_filename);
     goal->Accept(tree_printer);
 
-    auto symbol_table = SymbolTableBuilder().Build(*goal);
+    SymbolTablePtr symbol_table;
+    try {
+        symbol_table = SymbolTableBuilder().Build(*goal);
+    } catch (const std::exception& e) {
+        std::cerr << e.what();
+        return 1;
+    }
 
     return 0;
 }

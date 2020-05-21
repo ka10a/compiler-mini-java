@@ -4,7 +4,7 @@ MethodInfo::MethodInfo(std::string_view name, LocationPtr location, TypePtr retu
     : EntityInfo(name, std::move(location)), return_type_(std::move(return_type)) {
 }
 
-//const TypePtr& MethodInfo::GetReturnType() const {
+// const TypePtr& MethodInfo::GetReturnType() const {
 //    return return_type_;
 //}
 
@@ -28,7 +28,7 @@ const VarInfoStorage& MethodInfo::GetArgInfoStorage() const {
     return args_;
 }
 
-const VarInfoStorage & MethodInfo::GetVarInfoStorage() const {
+const VarInfoStorage& MethodInfo::GetVarInfoStorage() const {
     return variables_;
 }
 
@@ -40,7 +40,7 @@ bool MethodInfo::HasVariable(std::string_view variable_name) const {
     return variables_.find(variable_name) != variables_.end();
 }
 
-MethodInfo& MethodInfo::AddArgInfo( VarInfoPtr arg) {
+MethodInfo& MethodInfo::AddArgInfo(VarInfoPtr arg) {
     args_[arg->GetName()] = std::move(arg);
     return *this;
 }
