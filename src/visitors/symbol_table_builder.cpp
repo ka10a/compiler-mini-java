@@ -457,16 +457,11 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
     }
 
     if (!current_class_->HasMethod(name)) {
-        is_valid_expr_ = false;
-        errors_ << "Error at line: "
-                << method_call_expression.GetMethodName()->GetLocation()->begin.line << " column: "
-                << method_call_expression.GetMethodName()->GetLocation()->begin.column
-                << ". Message: method " << name << " doesn't exist.\n";
         return;
     }
 
     auto met = current_class_->GetMethodInfo(name);
-    if (met->GetArgInfoStorageSize() != method_call_expression.GetParams().size()) {
+    if (met && met->GetArgInfoStorageSize() != method_call_expression.GetParams().size()) {
         is_valid_expr_ = false;
         errors_ << "Error at line: " << method_call_expression.GetLocation()->begin.line
                 << " column: " << method_call_expression.GetLocation()->begin.column
