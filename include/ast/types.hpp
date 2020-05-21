@@ -5,7 +5,7 @@
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
 
-enum class InnerType { NONE, INT, BOOL, INT_ARRAY, CLASS };
+enum class InnerType { INT, BOOL, INT_ARRAY, CLASS };
 
 class Type : public ASTNode {
 public:

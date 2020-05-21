@@ -11,7 +11,7 @@
 
 class SymbolTableBuilder : public Visitor {
 public:
-    explicit SymbolTableBuilder();
+    explicit SymbolTableBuilder() = default;
 
     SymbolTablePtr Build(const Goal& goal);
 
@@ -59,11 +59,15 @@ public:
 private:
     void PrintErrors() const;
 
-    SymbolTablePtr symbol_table_;
+private:
+    SymbolTablePtr symbol_table_ = std::make_shared<SymbolTable>();
+
     ClassInfoPtr current_class_;
     MethodInfoPtr current_method_;
-    VarInfoPtr current_var_;
-    InnerType current_type_;
-    bool is_valid_expr_;
+
+    std::string_view current_class_name_;
+    TypePtr current_type_;
+    bool is_valid_expr_ = true;
+
     std::ostringstream errors_;
 };

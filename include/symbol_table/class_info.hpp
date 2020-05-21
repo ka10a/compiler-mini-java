@@ -31,8 +31,8 @@ public:
     bool HasVariable(std::string_view variable_name) const;
     bool HasMethod(std::string_view method_name) const;
 
-    ClassInfo& AddVariableInfo(VarInfoPtr variable);
-    ClassInfo& AddMethodInfo(MethodInfoPtr method);
+    VarInfoPtr AddVariableInfo(const VarDeclarationPtr& var);
+    MethodInfoPtr AddMethodInfo(const MethodDeclarationPtr& method);
 
 private:
     std::optional<std::string_view> extends_name_;

@@ -33,14 +33,17 @@ bool ClassInfo::HasMethod(std::string_view method_name) const {
     return methods_.find(method_name) != methods_.end();
 }
 
-ClassInfo& ClassInfo::AddVariableInfo(VarInfoPtr variable) {
-    variables_[variable->GetName()] = std::move(variable);
-    return *this;
+VarInfoPtr ClassInfo::AddVariableInfo(const VarDeclarationPtr& var) {
+    std::string_view var_name = var->GetVarName()->GetName();
+    variables_[var_name] = std::make_shared<VarInfo>(var_name, var->GetLocation(), var->GetType());
+    return variables_[var_name];
 }
 
-ClassInfo& ClassInfo::AddMethodInfo(MethodInfoPtr method) {
-    methods_[method->GetName()] = std::move(method);
-    return *this;
+MethodInfoPtr ClassInfo::AddMethodInfo(const MethodDeclarationPtr& method) {
+    std::string_view method_name = method->GetMethodName()->GetName();
+    methods_[method_name] =
+        std::make_shared<MethodInfo>(method_name, method->GetLocation(), method->GetReturnType());
+    return methods_[method_name];
 }
 
 const VarInfoStorage& ClassInfo::GetVarInfoStorage() const {

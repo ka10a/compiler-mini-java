@@ -19,8 +19,8 @@ public:
 
     bool HasClass(std::string_view class_name) const;
 
-    SymbolTable& AddMainClass(ClassInfoPtr main_class);
-    SymbolTable& AddOrdinaryClass(ClassInfoPtr class_declaration);
+    ClassInfoPtr AddMainClass(const MainClassPtr& main_class);
+    ClassInfoPtr AddOrdinaryClass(const ClassDeclarationPtr& class_decl);
 
 private:
     ClassInfoPtr main_class_;
