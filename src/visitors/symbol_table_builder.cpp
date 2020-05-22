@@ -6,14 +6,78 @@ SymbolTablePtr SymbolTableBuilder::Build(const Goal& goal) {
     return std::move(symbol_table_);
 }
 
+void SymbolTableBuilder::NoteError(const LocationPtr& location, EntityType entity_type,
+                                   ErrorType error_type, std::string name = "") {
+    std::string entity_descr;
+    std::string error_descr;
+
+    if (name.length()) {
+        switch (entity_type) {
+            case EntityType::METHOD:
+                entity_descr = "method ";
+                break;
+            case EntityType::VARIABLE:
+                entity_descr = "variable ";
+                break;
+            case EntityType::ENTITY_CLASS:
+                entity_descr = "class ";
+                break;
+            case EntityType::ARGUMENT:
+                entity_descr = "argument ";
+                break;
+            case EntityType::CALLING_METHOD:
+                entity_descr = "calling a method ";
+                break;
+            case EntityType::NOTHING:
+                entity_descr = "";
+                break;
+        }
+    }
+
+    switch (error_type) {
+        case ErrorType::ALREADY_DECL:
+            error_descr = " was already declared";
+            break;
+        case ErrorType::MISSED_DECL:
+            error_descr = " wasn't declared";
+            break;
+        case ErrorType::WRONG_SIGN:
+            error_descr = " returned type doesn't match function signature";
+            break;
+        case ErrorType::BOOL_REQUIR:
+            error_descr = " bool type is required";
+            break;
+        case ErrorType::WRONG_TYPE_PRINT:
+            error_descr = " wrong type for printing";
+            break;
+        case ErrorType::TYPE_MISMATCH:
+            error_descr = " type mismatch while assigning";
+            break;
+        case ErrorType::NOT_EXIST:
+            error_descr = " doesn't exist";
+            break;
+        case ErrorType::INT_ARRAY_REQUIR:
+            error_descr = " int array type is required";
+            break;
+        case ErrorType::INT_REQUIR:
+            error_descr = " int type is required";
+            break;
+        case ErrorType::FROM_PRIM_TYPE:
+            error_descr = " from a primitive type";
+            break;
+    }
+
+    errors_ << "Error at line: " << location->begin.line << " column: " << location->begin.column
+            << ". Message: " << entity_descr << name << error_descr << ".\n";
+}
+
 void SymbolTableBuilder::Visit(const Goal& goal) {
     const auto& class_declarations = goal.GetClassDeclarations();
     for (const auto& class_decl : class_declarations) {
         const auto& class_name = class_decl->GetClassName()->GetName();
         if (symbol_table_->HasClass(class_name)) {
-            errors_ << "Error at line: " << class_decl->GetLocation()->begin.line
-                    << " column: " << class_decl->GetLocation()->begin.column << ". Message: class "
-                    << class_name << " was already declared.\n";
+            NoteError(class_decl->GetLocation(), EntityType::ENTITY_CLASS, ErrorType::ALREADY_DECL,
+                      class_name);
             continue;
         }
         auto new_class = symbol_table_->AddOrdinaryClass(class_decl);
@@ -21,9 +85,8 @@ void SymbolTableBuilder::Visit(const Goal& goal) {
         for (const auto& var : class_decl->GetVariables()) {
             const auto& var_name = var->GetVarName()->GetName();
             if (new_class->HasVariable(var_name)) {
-                errors_ << "Error at line: " << var->GetLocation()->begin.line
-                        << " column: " << var->GetLocation()->begin.column << ". Message: variable "
-                        << var_name << " was already declared.\n";
+                NoteError(var->GetLocation(), EntityType::VARIABLE, ErrorType::ALREADY_DECL,
+                          var_name);
                 continue;
             }
             new_class->AddVariableInfo(var);
@@ -33,9 +96,8 @@ void SymbolTableBuilder::Visit(const Goal& goal) {
             const auto& method_name = method->GetMethodName()->GetName();
             // TODO: Check here number and order of arguments in a method.
             if (new_class->HasMethod(method_name)) {
-                errors_ << "Error at line: " << method->GetLocation()->begin.line
-                        << " column: " << method->GetLocation()->begin.column
-                        << ". Message: method " << method_name << " was already declared.\n";
+                NoteError(method->GetLocation(), EntityType::METHOD, ErrorType::ALREADY_DECL,
+                          method_name);
                 continue;
             }
             new_class->AddMethodInfo(method);
@@ -47,9 +109,8 @@ void SymbolTableBuilder::Visit(const Goal& goal) {
         !symbol_table_->HasClass(main_class_name)) {
         symbol_table_->AddMainClass(main_class);
     } else {
-        errors_ << "Error at line: " << main_class->GetLocation()->begin.line
-                << " column: " << main_class->GetLocation()->begin.column << ". Message: class "
-                << main_class_name << " was already declared.\n";
+        NoteError(main_class->GetLocation(), EntityType::ENTITY_CLASS, ErrorType::ALREADY_DECL,
+                  main_class_name);
     }
 
     for (const auto& class_decl : class_declarations) {
@@ -84,9 +145,8 @@ void SymbolTableBuilder::Visit(const MethodDeclaration& method_declaration) {
     for (const auto& arg : method_declaration.GetArgs()) {
         const auto& arg_name = arg->GetVarName()->GetName();
         if (current_method_->HasArg(arg_name)) {
-            errors_ << "Error at line: " << method_declaration.GetLocation()->begin.line
-                    << " column: " << method_declaration.GetLocation()->begin.column
-                    << ". Message: argument " << arg->GetVarName() << " was already declared.\n";
+            NoteError(method_declaration.GetLocation(), EntityType::ARGUMENT,
+                      ErrorType::ALREADY_DECL, arg_name);
             continue;
         }
         current_method_->AddArgInfo(
@@ -96,9 +156,7 @@ void SymbolTableBuilder::Visit(const MethodDeclaration& method_declaration) {
     for (const auto& var : method_declaration.GetVariables()) {
         const auto& var_name = var->GetVarName()->GetName();
         if (current_method_->HasVariable(var_name)) {
-            errors_ << "Error at line: " << var->GetLocation()->begin.line
-                    << " column: " << var->GetLocation()->begin.column << ". Message: variable "
-                    << var_name << " was already declared.\n";
+            NoteError(var->GetLocation(), EntityType::VARIABLE, ErrorType::ALREADY_DECL, var_name);
             continue;
         }
         current_method_->AddVariableInfo(
@@ -112,9 +170,7 @@ void SymbolTableBuilder::Visit(const MethodDeclaration& method_declaration) {
 
     method_declaration.GetReturnExpression()->Accept(*this);
     if (is_valid_expr_ && current_type_->GetInnerType() != method_return_type->GetInnerType()) {
-        errors_ << "Error at line: " << method_return_type->GetLocation()->begin.line
-                << " column: " << method_return_type->GetLocation()->begin.column
-                << ". Message: returned type doesn't match function signature.\n";
+        NoteError(method_return_type->GetLocation(), EntityType::NOTHING, ErrorType::WRONG_SIGN);
     }
 
     is_valid_expr_ = true;
@@ -135,9 +191,8 @@ void SymbolTableBuilder::Visit(const StatementList& statement_list) {
 void SymbolTableBuilder::Visit(const IfElseStatement& if_else_statement) {
     if_else_statement.GetClause()->Accept(*this);
     if (is_valid_expr_ && current_type_->GetInnerType() != InnerType::BOOL) {
-        errors_ << "Error at line: " << if_else_statement.GetClause()->GetLocation()->begin.line
-                << " column: " << if_else_statement.GetClause()->GetLocation()->begin.column
-                << ". Message: bool type is required.\n";
+        NoteError(if_else_statement.GetClause()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::BOOL_REQUIR);
     }
     is_valid_expr_ = true;
     current_type_ = nullptr;
@@ -148,9 +203,7 @@ void SymbolTableBuilder::Visit(const IfElseStatement& if_else_statement) {
 void SymbolTableBuilder::Visit(const WhileStatement& while_statement) {
     while_statement.GetClause()->Accept(*this);
     if (is_valid_expr_ && current_type_->GetInnerType() != InnerType::BOOL) {
-        errors_ << "Error at line: " << while_statement.GetClause()->GetLocation()->begin.line
-                << " column: " << while_statement.GetClause()->GetLocation()->begin.column
-                << ". Message: bool type is required.\n";
+        NoteError(while_statement.GetLocation(), EntityType::NOTHING, ErrorType::BOOL_REQUIR);
     }
     is_valid_expr_ = true;
     current_type_ = nullptr;
@@ -160,9 +213,8 @@ void SymbolTableBuilder::Visit(const WhileStatement& while_statement) {
 void SymbolTableBuilder::Visit(const PrintStatement& print_statement) {
     print_statement.GetValue()->Accept(*this);
     if (is_valid_expr_ && current_type_->GetInnerType() != InnerType::INT) {
-        errors_ << "Error at line: " << print_statement.GetValue()->GetLocation()->begin.line
-                << " column: " << print_statement.GetValue()->GetLocation()->begin.column
-                << ". Message: wrong type for printing.\n";
+        NoteError(print_statement.GetValue()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::WRONG_TYPE_PRINT);
     }
 }
 
@@ -173,26 +225,20 @@ void SymbolTableBuilder::Visit(const AssignmentStatement& assignment_statement) 
     if (current_method_->HasVariable(name)) {
         auto var = current_method_->GetVariableInfo(name);
         if (is_valid_expr_ && current_type_->GetInnerType() != var->GetType()->GetInnerType()) {
-            errors_ << "Error at line: "
-                    << assignment_statement.GetValue()->GetLocation()->begin.line
-                    << " column: " << assignment_statement.GetValue()->GetLocation()->begin.column
-                    << ". Message: type mismatch while assigning.\n";
+            NoteError(assignment_statement.GetValue()->GetLocation(), EntityType::NOTHING,
+                      ErrorType::TYPE_MISMATCH);
         }
     } else if (current_method_->HasArg(name)) {
         auto arg = current_method_->GetArgInfo(name);
         if (is_valid_expr_ && current_type_->GetInnerType() != arg->GetType()->GetInnerType()) {
-            errors_ << "Error at line: "
-                    << assignment_statement.GetValue()->GetLocation()->begin.line
-                    << " column: " << assignment_statement.GetValue()->GetLocation()->begin.column
-                    << ". Message: type mismatch while assigning.\n";
+            NoteError(assignment_statement.GetValue()->GetLocation(), EntityType::NOTHING,
+                      ErrorType::TYPE_MISMATCH);
         }
     } else if (current_class_->HasVariable(name)) {
         auto var = current_class_->GetVariableInfo(name);
         if (is_valid_expr_ && current_type_->GetInnerType() != var->GetType()->GetInnerType()) {
-            errors_ << "Error at line: "
-                    << assignment_statement.GetValue()->GetLocation()->begin.line
-                    << " column: " << assignment_statement.GetValue()->GetLocation()->begin.column
-                    << ". Message: type mismatch while assigning.\n";
+            NoteError(assignment_statement.GetValue()->GetLocation(), EntityType::NOTHING,
+                      ErrorType::TYPE_MISMATCH);
         }
     } else if (current_class_->HasExtendsClass()) {
         const auto& extends_class =
@@ -200,16 +246,13 @@ void SymbolTableBuilder::Visit(const AssignmentStatement& assignment_statement) 
         if (extends_class->HasVariable(name)) {
             auto var = extends_class->GetVariableInfo(name);
             if (is_valid_expr_ && current_type_->GetInnerType() != var->GetType()->GetInnerType()) {
-                errors_ << "Error at line: "
-                        << assignment_statement.GetValue()->GetLocation()->begin.line << " column: "
-                        << assignment_statement.GetValue()->GetLocation()->begin.column
-                        << ". Message: type mismatch while assigning.\n";
+                NoteError(assignment_statement.GetValue()->GetLocation(), EntityType::NOTHING,
+                          ErrorType::TYPE_MISMATCH);
             }
         }
     } else {
-        errors_ << "Error at line: " << assignment_statement.GetValue()->GetLocation()->begin.line
-                << " column: " << assignment_statement.GetValue()->GetLocation()->begin.column
-                << ". Message: variable " << name << " doesn't exist.\n";
+        NoteError(assignment_statement.GetVariable()->GetLocation(), EntityType::VARIABLE,
+                  ErrorType::NOT_EXIST, name);
     }
     is_valid_expr_ = true;
     current_type_ = nullptr;
@@ -218,30 +261,24 @@ void SymbolTableBuilder::Visit(const AssignmentStatement& assignment_statement) 
 void SymbolTableBuilder::Visit(const ArrayAssignmentStatement& array_assignment_statement) {
     array_assignment_statement.GetSize()->Accept(*this);
     if (is_valid_expr_ && current_type_->GetInnerType() != InnerType::INT) {
-        errors_ << "Error at line: " << array_assignment_statement.GetLocation()->begin.line
-                << " column: " << array_assignment_statement.GetLocation()->begin.column
-                << ". Message: int array type is required.\n";
+        NoteError(array_assignment_statement.GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_ARRAY_REQUIR);
     }
     is_valid_expr_ = true;
     current_type_ = nullptr;
 
     array_assignment_statement.GetValue()->Accept(*this);
     if (is_valid_expr_ && current_type_->GetInnerType() != InnerType::INT) {
-        errors_ << "Error at line: "
-                << array_assignment_statement.GetValue()->GetLocation()->begin.line
-                << " column: " << array_assignment_statement.GetValue()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(array_assignment_statement.GetValue()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     is_valid_expr_ = true;
     current_type_ = nullptr;
 
     const auto& name = array_assignment_statement.GetVariable()->GetName();
     if (!current_method_->HasVariable(name) && !current_class_->HasVariable(name)) {
-        errors_ << "Error at line: "
-                << array_assignment_statement.GetVariable()->GetLocation()->begin.line
-                << " column: "
-                << array_assignment_statement.GetVariable()->GetLocation()->begin.column
-                << ". Message: variable " << name << " doesn't exist.\n";
+        NoteError(array_assignment_statement.GetVariable()->GetLocation(), EntityType::VARIABLE,
+                  ErrorType::NOT_EXIST, name);
     }
 }
 
@@ -249,18 +286,16 @@ void SymbolTableBuilder::Visit(const AndExpression& and_expression) {
     and_expression.GetLhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::BOOL) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << and_expression.GetLhs()->GetLocation()->begin.line
-                << " column: " << and_expression.GetLhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(and_expression.GetLhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = nullptr;
 
     and_expression.GetRhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::BOOL) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << and_expression.GetRhs()->GetLocation()->begin.line
-                << " column: " << and_expression.GetRhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(and_expression.GetRhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = std::make_shared<BoolType>(and_expression.GetLocation());
 }
@@ -269,18 +304,16 @@ void SymbolTableBuilder::Visit(const LessExpression& less_expression) {
     less_expression.GetLhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << less_expression.GetLhs()->GetLocation()->begin.line
-                << " column: " << less_expression.GetLhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(less_expression.GetLhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = nullptr;
 
     less_expression.GetRhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << less_expression.GetRhs()->GetLocation()->begin.line
-                << " column: " << less_expression.GetRhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(less_expression.GetRhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = std::make_shared<BoolType>(less_expression.GetLocation());
 }
@@ -289,18 +322,16 @@ void SymbolTableBuilder::Visit(const AddExpression& add_expression) {
     add_expression.GetLhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << add_expression.GetLhs()->GetLocation()->begin.line
-                << " column: " << add_expression.GetLhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(add_expression.GetLhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = nullptr;
 
     add_expression.GetRhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << add_expression.GetRhs()->GetLocation()->begin.line
-                << " column: " << add_expression.GetRhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(add_expression.GetRhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = std::make_shared<IntType>(add_expression.GetLocation());
 }
@@ -309,18 +340,16 @@ void SymbolTableBuilder::Visit(const SubtractExpression& subtract_expression) {
     subtract_expression.GetLhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << subtract_expression.GetLhs()->GetLocation()->begin.line
-                << " column: " << subtract_expression.GetLhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(subtract_expression.GetLhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = nullptr;
 
     subtract_expression.GetRhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << subtract_expression.GetRhs()->GetLocation()->begin.line
-                << " column: " << subtract_expression.GetRhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(subtract_expression.GetRhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = std::make_shared<IntType>(subtract_expression.GetLocation());
 }
@@ -329,18 +358,16 @@ void SymbolTableBuilder::Visit(const MultiplyExpression& multiply_expression) {
     multiply_expression.GetLhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << multiply_expression.GetLhs()->GetLocation()->begin.line
-                << " column: " << multiply_expression.GetLhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(multiply_expression.GetLhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = nullptr;
 
     multiply_expression.GetRhs()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << multiply_expression.GetRhs()->GetLocation()->begin.line
-                << " column: " << multiply_expression.GetRhs()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(multiply_expression.GetRhs()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = std::make_shared<IntType>(multiply_expression.GetLocation());
 }
@@ -349,18 +376,16 @@ void SymbolTableBuilder::Visit(const ArrayExpression& array_expression) {
     array_expression.GetArray()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT_ARRAY) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << array_expression.GetArray()->GetLocation()->begin.line
-                << " column: " << array_expression.GetArray()->GetLocation()->begin.column
-                << ". Message: int array type is required.\n";
+        NoteError(array_expression.GetArray()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_ARRAY_REQUIR);
     }
     current_type_ = nullptr;
 
     array_expression.GetIdx()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << array_expression.GetIdx()->GetLocation()->begin.line
-                << " column: " << array_expression.GetIdx()->GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(array_expression.GetIdx()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = std::make_shared<IntType>(array_expression.GetLocation());
 }
@@ -369,9 +394,8 @@ void SymbolTableBuilder::Visit(const LengthExpression& length_expression) {
     length_expression.GetContainer()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT_ARRAY) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << length_expression.GetContainer()->GetLocation()->begin.line
-                << " column: " << length_expression.GetContainer()->GetLocation()->begin.column
-                << ". Message: int array type is required.\n";
+        NoteError(length_expression.GetContainer()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_ARRAY_REQUIR);
     }
     current_type_ = std::make_shared<IntType>(length_expression.GetLocation());
 }
@@ -383,10 +407,8 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
         current_type_->GetInnerType() == InnerType::INT_ARRAY ||
         current_type_->GetInnerType() == InnerType::BOOL) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: "
-                << method_call_expression.GetClassEntity()->GetLocation()->begin.line << " column: "
-                << method_call_expression.GetClassEntity()->GetLocation()->begin.column
-                << ". Message: calling a method " << method_name << " from a primitive type.\n";
+        NoteError(method_call_expression.GetClassEntity()->GetLocation(),
+                  EntityType::CALLING_METHOD, ErrorType::FROM_PRIM_TYPE, method_name);
         return;
     }
 
@@ -394,10 +416,8 @@ void SymbolTableBuilder::Visit(const MethodCallExpression& method_call_expressio
         symbol_table_->GetOrdinaryClass(current_type_->GetClassName()->GetName());
     if (!calling_class->HasMethod(method_name)) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: "
-                << method_call_expression.GetMethodName()->GetLocation()->begin.line << " column: "
-                << method_call_expression.GetMethodName()->GetLocation()->begin.column
-                << ". Message: method " << method_name << '\n';
+        NoteError(method_call_expression.GetMethodName()->GetLocation(), EntityType::METHOD,
+                  ErrorType::NOT_EXIST, method_name);
         return;
     }
 
@@ -427,16 +447,15 @@ void SymbolTableBuilder::Visit(const NewIntArrayExpression& new_int_array_expres
     new_int_array_expression.GetSize()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::INT) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << new_int_array_expression.GetLocation()->begin.line
-                << " column: " << new_int_array_expression.GetLocation()->begin.column
-                << ". Message: int type is required.\n";
+        NoteError(new_int_array_expression.GetLocation(), EntityType::NOTHING,
+                  ErrorType::INT_REQUIR);
     }
     current_type_ = std::make_shared<IntArrayType>(nullptr);
 }
 
 void SymbolTableBuilder::Visit(const NewExpression& new_expression) {
     new_expression.GetClassName()->Accept(*this);
-    if (current_type_->GetInnerType() != InnerType::CLASS) {
+    if (current_type_->GetInnerType() != InnerType::CUSTOM_CLASS) {
         is_valid_expr_ = false;
     }
 }
@@ -445,9 +464,8 @@ void SymbolTableBuilder::Visit(const NotExpression& not_expression) {
     not_expression.GetExpression()->Accept(*this);
     if (current_type_->GetInnerType() != InnerType::BOOL) {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << not_expression.GetExpression()->GetLocation()->begin.line
-                << " column: " << not_expression.GetExpression()->GetLocation()->begin.column
-                << ". Message: bool type is required.\n";
+        NoteError(not_expression.GetExpression()->GetLocation(), EntityType::NOTHING,
+                  ErrorType::BOOL_REQUIR);
     }
     current_type_ = std::make_shared<BoolType>(not_expression.GetLocation());
 }
@@ -478,30 +496,29 @@ void SymbolTableBuilder::Visit(const Identifier& identifier) {
         }
     } else {
         is_valid_expr_ = false;
-        errors_ << "Error at line: " << identifier.GetLocation()->begin.line
-                << " column: " << identifier.GetLocation()->begin.column << ". Message: name "
-                << identifier.GetName() << " wasn't declared.\n";
+        NoteError(identifier.GetLocation(), EntityType::VARIABLE, ErrorType::MISSED_DECL,
+                  identifier.GetName());
     }
 }
 
 void SymbolTableBuilder::PrintErrors() const {
     std::string errors = errors_.str();
     std::cerr << errors;
-    for (const auto& [cl_name, cl] : symbol_table_->GetClasses()) {
-        std::cerr << "class " << cl_name << "\n";
-        for (const auto& [m_name, m] : cl->GetMethodInfoStorage()) {
-            std::cerr << "method " << m_name << " "
-                      << static_cast<size_t>(m->GetReturnType()->GetInnerType()) << "\n";
-            for (const auto& [arg_name, arg] : m->GetArgInfoStorage()) {
-                std::cerr << "arg " << arg_name << " "
-                          << static_cast<size_t>(arg->GetType()->GetInnerType()) << "\n";
-            }
-            for (const auto& [var_name, var] : m->GetVarInfoStorage()) {
-                std::cerr << "var " << var_name << " "
-                          << static_cast<size_t>(var->GetType()->GetInnerType()) << "\n";
-            }
-        }
-    }
+    //    for (const auto& [cl_name, cl] : symbol_table_->GetClasses()) {
+    //        std::cerr << "class " << cl_name << "\n";
+    //        for (const auto& [m_name, m] : cl->GetMethodInfoStorage()) {
+    //            std::cerr << "method " << m_name << " "
+    //                      << static_cast<size_t>(m->GetReturnType()->GetInnerType()) << "\n";
+    //            for (const auto& [arg_name, arg] : m->GetArgInfoStorage()) {
+    //                std::cerr << "arg " << arg_name << " "
+    //                          << static_cast<size_t>(arg->GetType()->GetInnerType()) << "\n";
+    //            }
+    //            for (const auto& [var_name, var] : m->GetVarInfoStorage()) {
+    //                std::cerr << "var " << var_name << " "
+    //                          << static_cast<size_t>(var->GetType()->GetInnerType()) << "\n";
+    //            }
+    //        }
+    //    }
 
     if (!errors.empty()) {
         throw std::logic_error("Errors found. You are so stupid, maaaaan.");

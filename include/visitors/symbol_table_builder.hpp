@@ -70,4 +70,22 @@ private:
     bool is_valid_expr_ = true;
 
     std::ostringstream errors_;
+
+    enum class EntityType { METHOD, VARIABLE, ENTITY_CLASS, ARGUMENT, NOTHING, CALLING_METHOD };
+    enum class ErrorType {
+        ALREADY_DECL,
+        MISSED_DECL,
+        WRONG_SIGN,
+        BOOL_REQUIR,
+        WRONG_TYPE_PRINT,
+        TYPE_MISMATCH,
+        NOT_EXIST,
+        INT_ARRAY_REQUIR,
+        INT_REQUIR,
+        FROM_PRIM_TYPE
+    };
+
+private:
+    void NoteError(const LocationPtr& location, EntityType entity_type, ErrorType error_type,
+                   std::string name);
 };

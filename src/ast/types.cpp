@@ -3,6 +3,7 @@
 
 Type::Type(LocationPtr location) : ASTNode(std::move(location)) {
 }
+
 const IdentifierPtr& Type::GetClassName() const {
     throw std::logic_error("This is not a custom class.");
 }
@@ -53,5 +54,5 @@ const IdentifierPtr& ClassType::GetClassName() const {
 }
 
 InnerType ClassType::GetInnerType() const {
-    return InnerType::CLASS;
+    return InnerType::CUSTOM_CLASS;
 }
