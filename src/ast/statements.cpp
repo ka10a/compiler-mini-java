@@ -1,7 +1,11 @@
 #include <ast/statements.hpp>
 #include <visitors/visitor.hpp>
 
-StatementList::StatementList(Statements statements) : statements_(std::move(statements)) {
+Statement::Statement(LocationPtr location) : ASTNode(std::move(location)) {
+}
+
+StatementList::StatementList(LocationPtr location, Statements statements)
+    : Statement(std::move(location)), statements_(std::move(statements)) {
 }
 
 void StatementList::Accept(Visitor& visitor) const {
@@ -12,8 +16,12 @@ const Statements& StatementList::GetStatements() const {
     return statements_;
 }
 
-IfElseStatement::IfElseStatement(ExpressionPtr clause, StatementPtr if_body, StatementPtr else_body)
-    : clause_(std::move(clause)), if_body_(std::move(if_body)), else_body_(std::move(else_body)) {
+IfElseStatement::IfElseStatement(LocationPtr location, ExpressionPtr clause, StatementPtr if_body,
+                                 StatementPtr else_body)
+    : Statement(std::move(location))
+    , clause_(std::move(clause))
+    , if_body_(std::move(if_body))
+    , else_body_(std::move(else_body)) {
 }
 
 void IfElseStatement::Accept(Visitor& visitor) const {
@@ -32,8 +40,8 @@ const StatementPtr& IfElseStatement::GetElseBody() const {
     return else_body_;
 }
 
-WhileStatement::WhileStatement(ExpressionPtr clause, StatementPtr body)
-    : clause_(std::move(clause)), body_(std::move(body)) {
+WhileStatement::WhileStatement(LocationPtr location, ExpressionPtr clause, StatementPtr body)
+    : Statement(std::move(location)), clause_(std::move(clause)), body_(std::move(body)) {
 }
 
 void WhileStatement::Accept(Visitor& visitor) const {
@@ -48,7 +56,8 @@ const StatementPtr& WhileStatement::GetBody() const {
     return body_;
 }
 
-PrintStatement::PrintStatement(ExpressionPtr value) : value_(std::move(value)) {
+PrintStatement::PrintStatement(LocationPtr location, ExpressionPtr value)
+    : Statement(std::move(location)), value_(std::move(value)) {
 }
 
 void PrintStatement::Accept(Visitor& visitor) const {
@@ -59,8 +68,9 @@ const ExpressionPtr& PrintStatement::GetValue() const {
     return value_;
 }
 
-AssignmentStatement::AssignmentStatement(IdentifierPtr variable, ExpressionPtr value)
-    : variable_(std::move(variable)), value_(std::move(value)) {
+AssignmentStatement::AssignmentStatement(LocationPtr location, IdentifierPtr variable,
+                                         ExpressionPtr value)
+    : Statement(std::move(location)), variable_(std::move(variable)), value_(std::move(value)) {
 }
 
 void AssignmentStatement::Accept(Visitor& visitor) const {
@@ -75,9 +85,12 @@ const ExpressionPtr& AssignmentStatement::GetValue() const {
     return value_;
 }
 
-ArrayAssignmentStatement::ArrayAssignmentStatement(IdentifierPtr variable, ExpressionPtr size,
-                                                   ExpressionPtr value)
-    : variable_(std::move(variable)), size_(std::move(size)), value_(std::move(value)) {
+ArrayAssignmentStatement::ArrayAssignmentStatement(LocationPtr location, IdentifierPtr variable,
+                                                   ExpressionPtr size, ExpressionPtr value)
+    : Statement(std::move(location))
+    , variable_(std::move(variable))
+    , size_(std::move(size))
+    , value_(std::move(value)) {
 }
 
 void ArrayAssignmentStatement::Accept(Visitor& visitor) const {

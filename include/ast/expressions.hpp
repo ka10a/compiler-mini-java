@@ -6,14 +6,17 @@
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
 
-class Expression : public ASTNode {};
+class Expression : public ASTNode {
+public:
+    Expression(LocationPtr location);
+};
 
 using ExpressionPtr = std::shared_ptr<Expression>;
 using Expressions = std::deque<ExpressionPtr>;
 
 class AndExpression : public Expression {
 public:
-    AndExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    AndExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -25,7 +28,7 @@ private:
 
 class LessExpression : public Expression {
 public:
-    LessExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    LessExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -37,7 +40,7 @@ private:
 
 class AddExpression : public Expression {
 public:
-    AddExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    AddExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -49,7 +52,7 @@ private:
 
 class SubtractExpression : public Expression {
 public:
-    SubtractExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    SubtractExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -59,9 +62,9 @@ private:
     ExpressionPtr rhs_;
 };
 
-class MultiplicateExpression : public Expression {
+class MultiplyExpression : public Expression {
 public:
-    MultiplicateExpression(ExpressionPtr lhs, ExpressionPtr rhs);
+    MultiplyExpression(LocationPtr location, ExpressionPtr lhs, ExpressionPtr rhs);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetLhs() const;
     const ExpressionPtr& GetRhs() const;
@@ -73,7 +76,7 @@ private:
 
 class ArrayExpression : public Expression {
 public:
-    ArrayExpression(ExpressionPtr array, ExpressionPtr idx);
+    ArrayExpression(LocationPtr location, ExpressionPtr array, ExpressionPtr idx);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetArray() const;
     const ExpressionPtr& GetIdx() const;
@@ -85,7 +88,7 @@ private:
 
 class LengthExpression : public Expression {
 public:
-    explicit LengthExpression(ExpressionPtr container);
+    LengthExpression(LocationPtr location, ExpressionPtr container);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetContainer() const;
 
@@ -95,7 +98,8 @@ private:
 
 class MethodCallExpression : public Expression {
 public:
-    MethodCallExpression(ExpressionPtr class_entity, IdentifierPtr method_name, Expressions params);
+    MethodCallExpression(LocationPtr location, ExpressionPtr class_entity,
+                         IdentifierPtr method_name, Expressions params);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetClassEntity() const;
     const IdentifierPtr& GetMethodName() const;
@@ -109,7 +113,7 @@ private:
 
 class IntExpression : public Expression {
 public:
-    explicit IntExpression(int value);
+    IntExpression(LocationPtr location, int value);
     void Accept(Visitor& visitor) const override;
     int GetValue() const;
 
@@ -119,7 +123,7 @@ private:
 
 class BoolExpression : public Expression {
 public:
-    explicit BoolExpression(bool value);
+    BoolExpression(LocationPtr location, bool value);
     void Accept(Visitor& visitor) const override;
     bool IsValue() const;
 
@@ -129,7 +133,7 @@ private:
 
 class IdentifierExpression : public Expression {
 public:
-    explicit IdentifierExpression(IdentifierPtr variable_name);
+    IdentifierExpression(LocationPtr location, IdentifierPtr variable_name);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetVariableName() const;
 
@@ -139,13 +143,13 @@ private:
 
 class ThisExpression : public Expression {
 public:
-    ThisExpression() = default;
+    ThisExpression(LocationPtr location);
     void Accept(Visitor& visitor) const override;
 };
 
 class NewIntArrayExpression : public Expression {
 public:
-    explicit NewIntArrayExpression(ExpressionPtr size);
+    NewIntArrayExpression(LocationPtr location, ExpressionPtr size);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetSize() const;
 
@@ -155,7 +159,7 @@ private:
 
 class NewExpression : public Expression {
 public:
-    explicit NewExpression(IdentifierPtr class_name);
+    NewExpression(LocationPtr location, IdentifierPtr class_name);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetClassName() const;
 
@@ -165,7 +169,7 @@ private:
 
 class NotExpression : public Expression {
 public:
-    explicit NotExpression(ExpressionPtr expression);
+    NotExpression(LocationPtr location, ExpressionPtr expression);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetExpression() const;
 

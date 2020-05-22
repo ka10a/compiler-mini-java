@@ -7,14 +7,17 @@
 #include <ast/expressions.hpp>
 #include <ast/identifier.hpp>
 
-class Statement : public ASTNode {};
+class Statement : public ASTNode {
+public:
+    Statement(LocationPtr location);
+};
 
 using StatementPtr = std::shared_ptr<Statement>;
 using Statements = std::deque<StatementPtr>;
 
 class StatementList : public Statement {
 public:
-    explicit StatementList(Statements statements);
+    StatementList(LocationPtr location, Statements statements);
     void Accept(Visitor& visitor) const override;
     const Statements& GetStatements() const;
 
@@ -24,7 +27,8 @@ private:
 
 class IfElseStatement : public Statement {
 public:
-    IfElseStatement(ExpressionPtr clause, StatementPtr if_body, StatementPtr else_body);
+    IfElseStatement(LocationPtr location, ExpressionPtr clause, StatementPtr if_body,
+                    StatementPtr else_body);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetClause() const;
     const StatementPtr& GetIfBody() const;
@@ -38,7 +42,7 @@ private:
 
 class WhileStatement : public Statement {
 public:
-    WhileStatement(ExpressionPtr clause, StatementPtr body);
+    WhileStatement(LocationPtr location, ExpressionPtr clause, StatementPtr body);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetClause() const;
     const StatementPtr& GetBody() const;
@@ -50,7 +54,7 @@ private:
 
 class PrintStatement : public Statement {
 public:
-    explicit PrintStatement(ExpressionPtr value);
+    PrintStatement(LocationPtr location, ExpressionPtr value);
     void Accept(Visitor& visitor) const override;
     const ExpressionPtr& GetValue() const;
 
@@ -60,7 +64,7 @@ private:
 
 class AssignmentStatement : public Statement {
 public:
-    AssignmentStatement(IdentifierPtr variable, ExpressionPtr value);
+    AssignmentStatement(LocationPtr location, IdentifierPtr variable, ExpressionPtr value);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetVariable() const;
     const ExpressionPtr& GetValue() const;
@@ -72,7 +76,8 @@ private:
 
 class ArrayAssignmentStatement : public Statement {
 public:
-    ArrayAssignmentStatement(IdentifierPtr variable, ExpressionPtr size, ExpressionPtr value);
+    ArrayAssignmentStatement(LocationPtr location, IdentifierPtr variable, ExpressionPtr size,
+                             ExpressionPtr value);
     void Accept(Visitor& visitor) const override;
     const IdentifierPtr& GetVariable() const;
     const ExpressionPtr& GetSize() const;

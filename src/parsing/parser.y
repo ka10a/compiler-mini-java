@@ -11,6 +11,7 @@ void yy::parser::error(const location_type& loc, const std::string& msg) {
 }
 
 GoalPtr goal;
+extern yy::location loc;
 %}
 
 %code requires {
@@ -112,13 +113,14 @@ GoalPtr goal;
 %%
 Goal:
     MainClass ClassDeclarations {
-        goal = std::make_shared<Goal>(std::move($1), std::move($2));
+        goal = std::make_shared<Goal>(std::make_shared<yy::location>(loc), std::move($1), std::move($2));
     }
 ;
 
 MainClass:
     "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}" {
         $$ = std::make_shared<MainClass>(
+            std::make_shared<yy::location>(loc),
             std::move($2),
             std::move($15)
         );
@@ -138,6 +140,7 @@ ClassDeclarations:
 ClassDeclaration:
     "class" Identifier Extends "{" VarDeclarations MethodDeclarations "}" {
         $$ = std::make_shared<ClassDeclaration>(
+            std::make_shared<yy::location>(loc),
             std::move($2),
             std::move($3),
             std::move($5),
@@ -167,7 +170,7 @@ VarDeclarations:
 
 VarDeclaration:
     Type Identifier ";" {
-        $$ = std::make_shared<VarDeclaration>(std::move($1), std::move($2));
+        $$ = std::make_shared<VarDeclaration>(std::make_shared<yy::location>(loc), std::move($1), std::move($2));
     }
 ;
 
@@ -184,6 +187,7 @@ MethodDeclarations:
 MethodDeclaration:
     "public" Type Identifier "(" MethodArgs ")" "{" VarDeclarations Statements "return" Expression ";" "}" {
         $$ = std::make_shared<MethodDeclaration>(
+            std::make_shared<yy::location>(loc),
             std::move($2),
             std::move($3),
             std::move($5),
@@ -202,6 +206,7 @@ MethodArgs:
         $$ = VarDeclarations();
         $$.push_back(
             std::make_shared<VarDeclaration>(
+                std::make_shared<yy::location>(loc),
                 std::move($1),
                 std::move($2)
             )
@@ -210,6 +215,7 @@ MethodArgs:
     | MethodArgs "," Type Identifier {
         $1.push_back(
             std::make_shared<VarDeclaration>(
+                std::make_shared<yy::location>(loc),
                 std::move($3),
                 std::move($4)
             )
@@ -220,16 +226,16 @@ MethodArgs:
 
 Type:
     "int" "[" "]" {
-        $$ = std::make_shared<IntArrayType>();
+        $$ = std::make_shared<IntArrayType>(std::make_shared<yy::location>(loc));
     }
     | "int" {
-        $$ = std::make_shared<IntType>();
+        $$ = std::make_shared<IntType>(std::make_shared<yy::location>(loc));
     }
     | "boolean" {
-        $$ = std::make_shared<BoolType>();
+        $$ = std::make_shared<BoolType>(std::make_shared<yy::location>(loc));
     }
     | Identifier {
-        $$ = std::make_shared<IdentifierType>(std::move($1));
+        $$ = std::make_shared<ClassType>(std::make_shared<yy::location>(loc), std::move($1));
     }
 ;
 
@@ -245,10 +251,11 @@ Statements:
 
 Statement:
     "{" Statements "}" {
-        $$ = std::make_shared<StatementList>(std::move($2));
+        $$ = std::make_shared<StatementList>(std::make_shared<yy::location>(loc), std::move($2));
     }
     | "if" "(" Expression ")" Statement "else" Statement {
         $$ = std::make_shared<IfElseStatement>(
+            std::make_shared<yy::location>(loc),
             std::move($3),
             std::move($5),
             std::move($7)
@@ -256,21 +263,24 @@ Statement:
     }
     | "while" "(" Expression ")" Statement {
         $$ = std::make_shared<WhileStatement>(
+            std::make_shared<yy::location>(loc),
             std::move($3),
             std::move($5)
         );
     }
     | "System.out.println" "(" Expression ")" ";" {
-        $$ = std::make_shared<PrintStatement>(std::move($3));
+        $$ = std::make_shared<PrintStatement>(std::make_shared<yy::location>(loc), std::move($3));
     }
     | Identifier "=" Expression ";" {
         $$ = std::make_shared<AssignmentStatement>(
+       	    std::make_shared<yy::location>(loc),
             std::move($1),
             std::move($3)
         );
     }
     | Identifier "[" Expression "]" "=" Expression ";" {
         $$ = std::make_shared<ArrayAssignmentStatement>(
+            std::make_shared<yy::location>(loc),
             std::move($1),
             std::move($3),
             std::move($6)
@@ -280,56 +290,57 @@ Statement:
 
 Expression:
     Expression "&&" Expression {
-        $$ = std::make_shared<AndExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<AndExpression>(std::make_shared<yy::location>(loc), std::move($1), std::move($3));
     }
     | Expression "<" Expression {
-        $$ = std::make_shared<LessExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<LessExpression>(std::make_shared<yy::location>(loc), std::move($1), std::move($3));
     }
     | Expression "+" Expression {
-        $$ = std::make_shared<AddExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<AddExpression>(std::make_shared<yy::location>(loc), std::move($1), std::move($3));
     }
     | Expression "-" Expression {
-        $$ = std::make_shared<SubtractExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<SubtractExpression>(std::make_shared<yy::location>(loc), std::move($1), std::move($3));
     }
     | Expression "*" Expression {
-        $$ = std::make_shared<MultiplicateExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<MultiplyExpression>(std::make_shared<yy::location>(loc), std::move($1), std::move($3));
     }
     | Expression "[" Expression "]" {
-        $$ = std::make_shared<ArrayExpression>(std::move($1), std::move($3));
+        $$ = std::make_shared<ArrayExpression>(std::make_shared<yy::location>(loc), std::move($1), std::move($3));
     }
     | Expression "length" {
-        $$ = std::make_shared<LengthExpression>(std::move($1));
+        $$ = std::make_shared<LengthExpression>(std::make_shared<yy::location>(loc), std::move($1));
     }
     | Expression "." Identifier "(" Expressions ")" {
         $$ = std::make_shared<MethodCallExpression>(
+            std::make_shared<yy::location>(loc),
             std::move($1),
             std::move($3),
             std::move($5)
         );
     }
     | INTEGER_LITERAL {
-        $$ = std::make_shared<IntExpression>($1);
+        $$ = std::make_shared<IntExpression>(std::make_shared<yy::location>(loc), $1);
     }
     | "true" {
-        $$ = std::make_shared<BoolExpression>(true);
+        $$ = std::make_shared<BoolExpression>(std::make_shared<yy::location>(loc), true);
     }
     | "false" {
-        $$ = std::make_shared<BoolExpression>(false);
+        $$ = std::make_shared<BoolExpression>(std::make_shared<yy::location>(loc), false);
     }
     | Identifier {
-        $$ = std::make_shared<IdentifierExpression>(std::move($1));
+        $$ = std::make_shared<IdentifierExpression>(std::make_shared<yy::location>(loc), std::move($1));
     }
     | "this" {
-        $$ = std::make_shared<ThisExpression>();
+        $$ = std::make_shared<ThisExpression>(std::make_shared<yy::location>(loc));
     }
     | "new" "int" "[" Expression "]" {
-        $$ = std::make_shared<NewIntArrayExpression>(std::move($4));
+        $$ = std::make_shared<NewIntArrayExpression>(std::make_shared<yy::location>(loc), std::move($4));
     }
     | "new" Identifier "(" ")" {
-        $$ = std::make_shared<NewExpression>(std::move($2));
+        $$ = std::make_shared<NewExpression>(std::make_shared<yy::location>(loc), std::move($2));
     }
     | "!" Expression {
-        $$ = std::make_shared<NotExpression>(std::move($2));
+        $$ = std::make_shared<NotExpression>(std::make_shared<yy::location>(loc), std::move($2));
     }
     | "(" Expression ")" {
         $$ = std::move($2);
@@ -352,7 +363,7 @@ Expressions:
 
 Identifier:
     IDENTIFIER {
-        $$ = std::make_shared<Identifier>(std::move($1));
+        $$ = std::make_shared<Identifier>(std::make_shared<yy::location>(loc), std::move($1));
     }
 ;
 %%

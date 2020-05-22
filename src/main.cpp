@@ -4,6 +4,7 @@
 #include <parser.hpp>
 #include <ast/goal.hpp>
 #include <visitors/ast_printer.hpp>
+#include <visitors/symbol_table_builder.hpp>
 
 extern FILE* yyin;
 extern GoalPtr goal;
@@ -47,13 +48,16 @@ int main(int argc, char* argv[]) {
 
     fclose(java_file);
 
+    ASTPrinter tree_printer(graph_filename);
+    goal->Accept(tree_printer);
+
+    SymbolTablePtr symbol_table;
     try {
-        ASTPrinter tree_printer(graph_filename);
-        goal->Accept(tree_printer);
-    } catch (...) {
-        std::cerr << "Exception while drawing a tree\n";
-        fclose(java_file);
-        throw;
+        symbol_table = SymbolTableBuilder().Build(*goal);
+    } catch (const std::exception& e) {
+        std::cerr << e.what();
+        return 1;
     }
+
     return 0;
 }

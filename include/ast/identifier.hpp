@@ -7,7 +7,7 @@
 
 class Identifier : public ASTNode {
 public:
-    explicit Identifier(std::string name);
+    Identifier(LocationPtr location, std::string name);
     void Accept(Visitor& visitor) const override;
     const std::string& GetName() const;
 

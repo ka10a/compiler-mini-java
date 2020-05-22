@@ -7,7 +7,7 @@
 
 class Goal : public ASTNode {
 public:
-    Goal(MainClassPtr main_class, ClassDeclarations class_declarations);
+    Goal(LocationPtr location, MainClassPtr main_class, ClassDeclarations class_declarations);
     void Accept(Visitor& visitor) const override;
     const MainClassPtr& GetMainClass() const;
     const ClassDeclarations& GetClassDeclarations() const;

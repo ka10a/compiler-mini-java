@@ -5,33 +5,44 @@
 #include <ast/ast_node.hpp>
 #include <ast/identifier.hpp>
 
-class Type : public ASTNode {};
+enum class InnerType { INT, BOOL, INT_ARRAY, CUSTOM_CLASS };
+
+class Type : public ASTNode {
+public:
+    Type(LocationPtr location);
+    virtual InnerType GetInnerType() const = 0;
+    virtual const IdentifierPtr& GetClassName() const;
+};
 
 using TypePtr = std::shared_ptr<Type>;
 
 class IntType : public Type {
 public:
-    IntType() = default;
+    IntType(LocationPtr location);
     void Accept(Visitor& visitor) const override;
+    InnerType GetInnerType() const override;
 };
 
 class BoolType : public Type {
 public:
-    BoolType() = default;
+    BoolType(LocationPtr location);
     void Accept(Visitor& visitor) const override;
+    InnerType GetInnerType() const override;
 };
 
 class IntArrayType : public Type {
 public:
-    IntArrayType() = default;
+    IntArrayType(LocationPtr location);
     void Accept(Visitor& visitor) const override;
+    InnerType GetInnerType() const override;
 };
 
-class IdentifierType : public Type {
+class ClassType : public Type {
 public:
-    explicit IdentifierType(IdentifierPtr class_name);
+    ClassType(LocationPtr location, IdentifierPtr class_name);
     void Accept(Visitor& visitor) const override;
-    const IdentifierPtr& GetClassName() const;
+    const IdentifierPtr& GetClassName() const override;
+    InnerType GetInnerType() const override;
 
 private:
     IdentifierPtr class_name_;

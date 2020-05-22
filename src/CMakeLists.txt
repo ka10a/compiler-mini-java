@@ -21,6 +21,7 @@ add_executable(
     main.cpp
     ${BISON_parser_OUTPUTS}
     ${FLEX_scanner_OUTPUTS}
+    ast/ast_node.cpp
     ast/class_declaration.cpp
     ast/expressions.cpp
     ast/goal.cpp
@@ -30,7 +31,13 @@ add_executable(
     ast/statements.cpp
     ast/types.cpp
     ast/var_declaration.cpp
+    symbol_table/class_info.cpp
+    symbol_table/entity_info.cpp
+    symbol_table/method_info.cpp
+    symbol_table/symbol_table.cpp
+    symbol_table/var_info.cpp
     visitors/ast_printer.cpp
+    visitors/symbol_table_builder.cpp
 )
 
 target_include_directories(compiler-mini-java PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

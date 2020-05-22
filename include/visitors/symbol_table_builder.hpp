@@ -1,23 +1,31 @@
 #pragma once
 
-#include <fstream>
+#include <sstream>
+#include <vector>
 
+#include <symbol_table/class_info.hpp>
+#include <symbol_table/method_info.hpp>
+#include <symbol_table/symbol_table.hpp>
+#include <symbol_table/var_info.hpp>
 #include <visitors/visitor.hpp>
 
-class ASTPrinter : public Visitor {
+class SymbolTableBuilder : public Visitor {
 public:
-    explicit ASTPrinter(const std::string& filename);
+    explicit SymbolTableBuilder() = default;
 
+    SymbolTablePtr Build(const Goal& goal);
+
+public:
     void Visit(const Goal& goal) override;
     void Visit(const MainClass& main_class) override;
     void Visit(const ClassDeclaration& class_declaration) override;
     void Visit(const MethodDeclaration& method_declaration) override;
     void Visit(const VarDeclaration& var_declaration) override;
 
-    void Visit(const IntType& int_type) override;
-    void Visit(const BoolType& bool_type) override;
-    void Visit(const IntArrayType& int_array_type) override;
-    void Visit(const ClassType& class_type) override;
+    void Visit(const IntType&) override;
+    void Visit(const BoolType&) override;
+    void Visit(const IntArrayType&) override;
+    void Visit(const ClassType&) override;
 
     void Visit(const StatementList& statement_list) override;
     void Visit(const IfElseStatement& if_else_statement) override;
@@ -49,8 +57,35 @@ public:
     void Visit(const Identifier& identifier) override;
 
 private:
-    std::ofstream out_;
-    size_t node_number_;
+    void PrintErrors() const;
 
-    void PrintEdge(size_t curr, size_t node_number);
+private:
+    SymbolTablePtr symbol_table_ = std::make_shared<SymbolTable>();
+
+    ClassInfoPtr current_class_;
+    MethodInfoPtr current_method_;
+
+    std::string_view current_class_name_;
+    TypePtr current_type_;
+    bool is_valid_expr_ = true;
+
+    std::ostringstream errors_;
+
+    enum class EntityType { METHOD, VARIABLE, ENTITY_CLASS, ARGUMENT, NOTHING, CALLING_METHOD };
+    enum class ErrorType {
+        ALREADY_DECL,
+        MISSED_DECL,
+        WRONG_SIGN,
+        BOOL_REQUIR,
+        WRONG_TYPE_PRINT,
+        TYPE_MISMATCH,
+        NOT_EXIST,
+        INT_ARRAY_REQUIR,
+        INT_REQUIR,
+        FROM_PRIM_TYPE
+    };
+
+private:
+    void NoteError(const LocationPtr& location, EntityType entity_type, ErrorType error_type,
+                   std::string name);
 };

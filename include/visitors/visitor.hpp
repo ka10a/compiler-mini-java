@@ -21,7 +21,7 @@ public:
     virtual void Visit(const IntType&) = 0;
     virtual void Visit(const BoolType&) = 0;
     virtual void Visit(const IntArrayType&) = 0;
-    virtual void Visit(const IdentifierType&) = 0;
+    virtual void Visit(const ClassType&) = 0;
 
     virtual void Visit(const StatementList&) = 0;
     virtual void Visit(const IfElseStatement&) = 0;
@@ -34,7 +34,7 @@ public:
     virtual void Visit(const LessExpression&) = 0;
     virtual void Visit(const AddExpression&) = 0;
     virtual void Visit(const SubtractExpression&) = 0;
-    virtual void Visit(const MultiplicateExpression&) = 0;
+    virtual void Visit(const MultiplyExpression&) = 0;
 
     virtual void Visit(const ArrayExpression&) = 0;
     virtual void Visit(const LengthExpression&) = 0;

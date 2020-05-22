@@ -79,7 +79,7 @@ void ASTPrinter::Visit(const MethodDeclaration& method_declaration) {
 
     node_number_++;
     PrintEdge(curr, node_number_);
-    method_declaration.GetName()->Accept(*this);
+    method_declaration.GetMethodName()->Accept(*this);
 
     for (const auto& arg : method_declaration.GetArgs()) {
         node_number_++;
@@ -93,7 +93,7 @@ void ASTPrinter::Visit(const MethodDeclaration& method_declaration) {
 
         node_number_++;
         PrintEdge(arg_number, node_number_);
-        arg->GetName()->Accept(*this);
+        arg->GetVarName()->Accept(*this);
     }
 
     for (const auto& var : method_declaration.GetVariables()) {
@@ -127,7 +127,7 @@ void ASTPrinter::Visit(const VarDeclaration& var_declaration) {
 
     node_number_++;
     PrintEdge(curr, node_number_);
-    var_declaration.GetName()->Accept(*this);
+    var_declaration.GetVarName()->Accept(*this);
 }
 
 void ASTPrinter::Visit(const IntType& /* int_type */) {
@@ -157,13 +157,13 @@ void ASTPrinter::Visit(const IntArrayType& /* int_array_type */) {
     PrintEdge(curr, node_number_);
 }
 
-void ASTPrinter::Visit(const IdentifierType& identifier_type) {
+void ASTPrinter::Visit(const ClassType& class_type) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"IdentifierType\"];\n";
 
     node_number_++;
     PrintEdge(curr, node_number_);
-    identifier_type.GetClassName()->Accept(*this);
+    class_type.GetClassName()->Accept(*this);
 }
 
 void ASTPrinter::Visit(const StatementList& statement_list) {
@@ -298,7 +298,7 @@ void ASTPrinter::Visit(const SubtractExpression& subtract_expression) {
     subtract_expression.GetRhs()->Accept(*this);
 }
 
-void ASTPrinter::Visit(const MultiplicateExpression& multiplicate_expression) {
+void ASTPrinter::Visit(const MultiplyExpression& multiplicate_expression) {
     size_t curr = node_number_;
     out_ << curr << " [label=\"MultiplicateExpression\"];\n";
 
